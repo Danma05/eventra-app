@@ -4,5 +4,5 @@
 -- PostgreSQL
 -- =====================================================
 
-CREATE DATABASE eventra_auth_db;
-CREATE DATABASE eventra_user_db;
+CREATE DATABASE eventra_auth;
+CREATE DATABASE eventra_user;
