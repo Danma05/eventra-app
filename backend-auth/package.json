@@ -1,0 +1,39 @@
+{
+  "name": "eventra-app",
+  "version": "1.0.0",
+  "description": "Aplicación móvil Eventra - gestión de eventos deportivos con arquitectura de microservicios.",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "nodemonConfig": {
+  "exec": "node server.js"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Danma05/eventra-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Danma05/eventra-app/issues"
+  },
+  "homepage": "https://github.com/Danma05/eventra-app#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
