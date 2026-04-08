@@ -2,24 +2,25 @@ package com.eventra.mobile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnGoToRegister;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        btnGoToRegister = findViewById(R.id.btnGoToRegister);
+        sessionManager = new SessionManager(this);
 
-        btnGoToRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-            startActivity(intent);
-        });
+        if (sessionManager.isLoggedIn()) {
+            startActivity(new Intent(this, HomeActivity.class));
+        } else {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+
+        finish();
     }
 }
