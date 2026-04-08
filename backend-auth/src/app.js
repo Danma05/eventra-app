@@ -13,7 +13,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
-  res.send("API Auth funcionando ");
+  res.send("Auth funcionando correctamente");
 });
 
 export default app;

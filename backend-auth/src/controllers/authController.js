@@ -5,17 +5,22 @@ export const register = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Faltan datos" });
+      return res.status(400).json({
+        message: "Correo y contraseña son obligatorios"
+      });
     }
 
     const user = await registerUser(email, password);
 
-    res.status(201).json({
-      message: "Usuario registrado",
-      user,
+    return res.status(201).json({
+      message: "Usuario registrado correctamente",
+      user
     });
+
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({
+      message: error.message
+    });
   }
 };
 
@@ -24,13 +29,18 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Faltan datos" });
+      return res.status(400).json({
+        message: "Correo y contraseña son obligatorios"
+      });
     }
 
     const data = await loginUser(email, password);
 
-    res.json(data);
+    return res.status(200).json(data);
+
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({
+      message: error.message
+    });
   }
 };
