@@ -1,107 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:padding="24dp">
+    android:background="@color/black">
 
     <LinearLayout
         android:id="@+id/loginContainer"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center_horizontal"
+        android:padding="24dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.498">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:srcCompat="@drawable/logo"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="12dp"/>
 
         <TextView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginBottom="16dp"
-            android:background="@android:drawable/btn_default"
-            android:backgroundTint="@color/primary"
-            android:gravity="center"
-            android:text="E"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EVENTRA"
             android:textColor="@color/white"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Bienvenido a Eventra"
-            android:textColor="@color/text_primary"
             android:textSize="28sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:text="Inicia sesión para continuar"
+            android:text="Tu compañero de running en Colombia"
             android:textColor="@color/text_secondary"
-            android:textSize="16sp" />
+            android:textSize="14sp"
+            android:layout_marginBottom="32dp"/>
 
+        <!-- Email: TextInputLayout CON su EditText adentro -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Correo electrónico">
+            android:hint="Correo electrónico"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:inputType="textEmailAddress" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Contraseña: TextInputLayout CON su EditText adentro -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
             android:hint="Contraseña"
-            app:endIconMode="password_toggle">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:endIconMode="password_toggle"
+            android:layout_marginBottom="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                tools:ignore="TouchTargetSizeCheck" />
+
         </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Olvidé contraseña: VA ANTES del botón -->
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Olvidaste tu contraseña?"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:text="Iniciar sesión"
+            android:layout_height="wrap_content"
+            android:text="Iniciar Sesión"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            app:backgroundTint="@color/primary" />
+            app:backgroundTint="@color/primary"/>
 
         <TextView
             android:id="@+id/tvGoRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:text="¿No tienes una cuenta? Regístrate"
-            android:textColor="@color/text_secondary" />
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
-
-        <TextView
-            android:id="@+id/tvForgotPassword"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
-            android:text="¿Olvidaste tu contraseña?"
             android:textColor="@color/primary"
-            android:textStyle="bold" />
+            android:layout_marginTop="24dp"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
