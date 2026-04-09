@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class HomeActivity extends AppCompatActivity {
 
     private TextView tvWelcome;
-    private Button btnLogout;
+    private Button btnGoProfile, btnLogout;
     private SessionManager sessionManager;
 
     @Override
@@ -26,10 +26,16 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         tvWelcome = findViewById(R.id.tvWelcome);
+        btnGoProfile = findViewById(R.id.btnGoProfile);
         btnLogout = findViewById(R.id.btnLogout);
 
         String email = sessionManager.getEmail();
-        tvWelcome.setText("Bienvenido, " + email);
+        tvWelcome.setText("Bienvenido a Eventra\n" + email);
+
+        btnGoProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
 
         btnLogout.setOnClickListener(v -> {
             sessionManager.clearSession();
