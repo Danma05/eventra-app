@@ -2,7 +2,7 @@
 -- EVENTRA - MICROSERVICIO AUTH
 -- ESQUEMA DE BASE DE DATOS
 -- PostgreSQL
--- Ejecutar dentro de: eventra_auth_db
+-- Ejecutar dentro de: eventra_auth
 -- =====================================================
 
 -- =====================================================
