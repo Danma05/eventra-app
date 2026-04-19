@@ -2,7 +2,7 @@
 -- EVENTRA - MICROSERVICIO USER
 -- ESQUEMA DE BASE DE DATOS
 -- PostgreSQL
--- Ejecutar dentro de: eventra_user_db
+-- Ejecutar dentro de: eventra_user
 -- =====================================================
 
 -- =====================================================
