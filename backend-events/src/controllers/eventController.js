@@ -11,7 +11,7 @@ const getEvents = async (req, res) => {
     const events = await listEvents();
     return res.status(200).json(events);
   } catch (error) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -24,7 +24,7 @@ const getEvent = async (req, res) => {
 
     return res.status(200).json(event);
   } catch (error) {
-    return res.status(404).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -40,7 +40,7 @@ const postEvent = async (req, res) => {
       event,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -49,14 +49,16 @@ const postEvent = async (req, res) => {
 const putEvent = async (req, res) => {
   try {
     const { id } = req.params;
-    const event = await editEvent(id, req.body);
+    const authUserId = req.user.id;
+
+    const event = await editEvent(id, req.body, authUserId);
 
     return res.status(200).json({
       message: "Evento actualizado correctamente",
       event,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -65,14 +67,16 @@ const putEvent = async (req, res) => {
 const destroyEvent = async (req, res) => {
   try {
     const { id } = req.params;
-    const event = await removeEvent(id);
+    const authUserId = req.user.id;
+
+    const event = await removeEvent(id, authUserId);
 
     return res.status(200).json({
       message: "Evento eliminado correctamente",
       event,
     });
   } catch (error) {
-    return res.status(404).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
