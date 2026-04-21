@@ -14,7 +14,9 @@ const findEventById = async (id) => {
   const event = await getEventById(id);
 
   if (!event) {
-    throw new Error("Evento no encontrado");
+    const error = new Error("Evento no encontrado");
+    error.statusCode = 404;
+    throw error;
   }
 
   return event;
@@ -23,8 +25,10 @@ const findEventById = async (id) => {
 const registerEvent = async (authUserId, data) => {
   const { title, event_date, location, capacity } = data;
 
-  if (!title || !event_date || !location || !capacity) {
-    throw new Error("title, event_date, location y capacity son obligatorios");
+  if (!title || !event_date || !location || capacity === undefined) {
+    const error = new Error("title, event_date, location y capacity son obligatorios");
+    error.statusCode = 400;
+    throw error;
   }
 
   const newEvent = await createEvent({
@@ -39,11 +43,19 @@ const registerEvent = async (authUserId, data) => {
   return newEvent;
 };
 
-const editEvent = async (id, data) => {
+const editEvent = async (id, data, authUserId) => {
   const existingEvent = await getEventById(id);
 
   if (!existingEvent) {
-    throw new Error("Evento no encontrado");
+    const error = new Error("Evento no encontrado");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (Number(existingEvent.organizer_auth_user_id) !== Number(authUserId)) {
+    const error = new Error("No tienes permiso para modificar este evento");
+    error.statusCode = 403;
+    throw error;
   }
 
   const updatedEvent = await updateEvent(id, {
@@ -51,18 +63,34 @@ const editEvent = async (id, data) => {
     description: data.description ?? existingEvent.description,
     event_date: data.event_date || existingEvent.event_date,
     location: data.location || existingEvent.location,
-    capacity: data.capacity || existingEvent.capacity,
+    capacity: data.capacity ?? existingEvent.capacity,
     status: data.status || existingEvent.status,
   });
 
   return updatedEvent;
 };
 
-const removeEvent = async (id) => {
+const removeEvent = async (id, authUserId) => {
+  const existingEvent = await getEventById(id);
+
+  if (!existingEvent) {
+    const error = new Error("Evento no encontrado");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (Number(existingEvent.organizer_auth_user_id) !== Number(authUserId)) {
+    const error = new Error("No tienes permiso para eliminar este evento");
+    error.statusCode = 403;
+    throw error;
+  }
+
   const deletedEvent = await deleteEvent(id);
 
   if (!deletedEvent) {
-    throw new Error("Evento no encontrado");
+    const error = new Error("Evento no encontrado");
+    error.statusCode = 404;
+    throw error;
   }
 
   return deletedEvent;
