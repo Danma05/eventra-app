@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class HomeActivity extends AppCompatActivity {
 
     private TextView tvWelcome;
-    private Button btnGoProfile, btnLogout;
+    private Button btnGoProfile, btnGoEvents, btnLogout;
     private SessionManager sessionManager;
 
     @Override
@@ -27,6 +27,7 @@ public class HomeActivity extends AppCompatActivity {
 
         tvWelcome = findViewById(R.id.tvWelcome);
         btnGoProfile = findViewById(R.id.btnGoProfile);
+        btnGoEvents = findViewById(R.id.btnGoEvents);
         btnLogout = findViewById(R.id.btnLogout);
 
         String email = sessionManager.getEmail();
@@ -34,6 +35,11 @@ public class HomeActivity extends AppCompatActivity {
 
         btnGoProfile.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        });
+
+        btnGoEvents.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, EventsActivity.class);
             startActivity(intent);
         });
 

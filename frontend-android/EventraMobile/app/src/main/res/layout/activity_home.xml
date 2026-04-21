@@ -36,16 +36,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Desde aquí podrás navegar al perfil y continuar con el flujo de la app."
+            android:text="Desde aquí podrás navegar al perfil, eventos y continuar con el flujo de la app."
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnGoProfile"
+        android:id="@+id/btnGoEvents"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="28dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="Ver eventos"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnGoProfile"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="14dp"
         android:background="@drawable/bg_button_primary"
         android:text="Ver perfil"
         android:textAllCaps="false"
