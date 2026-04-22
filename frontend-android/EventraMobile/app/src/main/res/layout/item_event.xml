@@ -7,10 +7,18 @@
     android:background="@drawable/bg_card_white"
     android:padding="18dp">
 
+    <ImageView
+        android:id="@+id/ivEventImage"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_gallery" />
+
     <TextView
         android:id="@+id/tvEventTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:text="Título evento"
         android:textColor="@color/text_primary"
         android:textSize="18sp"

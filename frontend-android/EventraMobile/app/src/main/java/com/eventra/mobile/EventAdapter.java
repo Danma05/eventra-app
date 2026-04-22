@@ -3,6 +3,7 @@ package com.eventra.mobile;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,6 +43,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.tvCapacity.setText("Capacidad: " + event.getCapacity());
         holder.tvStatus.setText("Estado: " + event.getStatus());
 
+        ImageLoader.loadImage(event.getImageUrl(), holder.ivEventImage);
+
         holder.itemView.setOnClickListener(v -> listener.onEventClick(event));
     }
 
@@ -52,10 +55,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     static class EventViewHolder extends RecyclerView.ViewHolder {
 
+        ImageView ivEventImage;
         TextView tvTitle, tvLocation, tvDate, tvCapacity, tvStatus;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
+            ivEventImage = itemView.findViewById(R.id.ivEventImage);
             tvTitle = itemView.findViewById(R.id.tvEventTitle);
             tvLocation = itemView.findViewById(R.id.tvEventLocation);
             tvDate = itemView.findViewById(R.id.tvEventDate);

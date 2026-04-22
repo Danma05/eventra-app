@@ -56,10 +56,22 @@ public class EventsActivity extends AppCompatActivity {
             Intent intent = new Intent(EventsActivity.this, EventDetailActivity.class);
             intent.putExtra("event_id", event.getId());
             startActivity(intent);
-        });*/
+        });
         adapter = new EventAdapter(eventList, event ->
                 Toast.makeText(EventsActivity.this, "Detalle se implementa en SCRUM-59", Toast.LENGTH_SHORT).show()
-        );
+        );*/
+
+        adapter = new EventAdapter(eventList, event -> {
+            Intent intent = new Intent(EventsActivity.this, EventDetailActivity.class);
+            intent.putExtra("title", event.getTitle());
+            intent.putExtra("description", event.getDescription());
+            intent.putExtra("date", event.getEventDate());
+            intent.putExtra("location", event.getLocation());
+            intent.putExtra("capacity", event.getCapacity());
+            intent.putExtra("status", event.getStatus());
+            intent.putExtra("image_url", event.getImageUrl());
+            startActivity(intent);
+        });
 
         recyclerEvents.setLayoutManager(new LinearLayoutManager(this));
         recyclerEvents.setAdapter(adapter);
@@ -115,7 +127,8 @@ public class EventsActivity extends AppCompatActivity {
                                         obj.optString("event_date"),
                                         obj.optString("location"),
                                         obj.optInt("capacity"),
-                                        obj.optString("status")
+                                        obj.optString("status"),
+                                        obj.optString("image_url")
                                 );
 
                                 eventList.add(event);

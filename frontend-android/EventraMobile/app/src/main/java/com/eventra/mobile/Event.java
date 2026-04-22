@@ -10,9 +10,10 @@ public class Event {
     private String location;
     private int capacity;
     private String status;
+    private String imageUrl;
 
     public Event(long id, long organizerAuthUserId, String title, String description,
-                 String eventDate, String location, int capacity, String status) {
+                 String eventDate, String location, int capacity, String status, String imageUrl) {
         this.id = id;
         this.organizerAuthUserId = organizerAuthUserId;
         this.title = title;
@@ -21,6 +22,7 @@ public class Event {
         this.location = location;
         this.capacity = capacity;
         this.status = status;
+        this.imageUrl = imageUrl;
     }
 
     public long getId() {
@@ -53,5 +55,9 @@ public class Event {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 }
