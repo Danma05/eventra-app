@@ -63,6 +63,7 @@ public class EventsActivity extends AppCompatActivity {
 
         adapter = new EventAdapter(eventList, event -> {
             Intent intent = new Intent(EventsActivity.this, EventDetailActivity.class);
+            intent.putExtra("event_id", event.getId());
             intent.putExtra("title", event.getTitle());
             intent.putExtra("description", event.getDescription());
             intent.putExtra("date", event.getEventDate());

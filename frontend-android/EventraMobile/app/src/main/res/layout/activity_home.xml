@@ -68,9 +68,9 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_button_outline"
+        android:background="@drawable/bg_button_primary"
         android:text="Cerrar sesión"
         android:textAllCaps="false"
-        android:textColor="@color/primary"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 </LinearLayout>
