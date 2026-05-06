@@ -22,13 +22,14 @@ const createEvent = async ({
   event_date,
   location,
   capacity,
+  image_url,
 }) => {
   const result = await pool.query(
     `INSERT INTO events
-    (organizer_auth_user_id, title, description, event_date, location, capacity)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    (organizer_auth_user_id, title, description, event_date, location, capacity, image_url)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *`,
-    [organizer_auth_user_id, title, description, event_date, location, capacity]
+    [organizer_auth_user_id, title, description, event_date, location, capacity, image_url]
   );
 
   return result.rows[0];
@@ -36,7 +37,7 @@ const createEvent = async ({
 
 const updateEvent = async (
   id,
-  { title, description, event_date, location, capacity, status }
+  { title, description, event_date, location, capacity, status, image_url }
 ) => {
   const result = await pool.query(
     `UPDATE events
@@ -46,10 +47,11 @@ const updateEvent = async (
          location = $4,
          capacity = $5,
          status = $6,
+         image_url = $7,
          updated_at = CURRENT_TIMESTAMP
-     WHERE id = $7
+     WHERE id = $8
      RETURNING *`,
-    [title, description, event_date, location, capacity, status, id]
+    [title, description, event_date, location, capacity, status, image_url, id]
   );
 
   return result.rows[0];

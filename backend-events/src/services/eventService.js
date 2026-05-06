@@ -31,13 +31,14 @@ const registerEvent = async (authUserId, data) => {
     throw error;
   }
 
-  const newEvent = await createEvent({
+    const newEvent = await createEvent({
     organizer_auth_user_id: authUserId,
     title: data.title,
     description: data.description || null,
     event_date: data.event_date,
     location: data.location,
     capacity: data.capacity,
+    image_url: data.image_url || null,
   });
 
   return newEvent;
@@ -58,13 +59,14 @@ const editEvent = async (id, data, authUserId) => {
     throw error;
   }
 
-  const updatedEvent = await updateEvent(id, {
+    const updatedEvent = await updateEvent(id, {
     title: data.title || existingEvent.title,
     description: data.description ?? existingEvent.description,
     event_date: data.event_date || existingEvent.event_date,
     location: data.location || existingEvent.location,
     capacity: data.capacity ?? existingEvent.capacity,
     status: data.status || existingEvent.status,
+    image_url: data.image_url ?? existingEvent.image_url,
   });
 
   return updatedEvent;

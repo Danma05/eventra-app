@@ -1,9 +1,9 @@
 const validateCreateEvent = (req, res, next) => {
-  const { title, event_date, location, capacity } = req.body;
+  const { title, event_date, location, capacity, image_url } = req.body;
 
-  if (!title || !event_date || !location || capacity === undefined) {
+  if (!title || !event_date || !location || capacity === undefined || !image_url) {
     return res.status(400).json({
-      message: "title, event_date, location y capacity son obligatorios",
+      message: "title, event_date, location, capacity e image_url son obligatorios",
     });
   }
 
@@ -22,6 +22,12 @@ const validateCreateEvent = (req, res, next) => {
   if (isNaN(Number(capacity)) || Number(capacity) <= 0) {
     return res.status(400).json({
       message: "capacity debe ser un número mayor a 0",
+    });
+  }
+
+  if (typeof image_url !== "string" || image_url.trim().length === 0) {
+    return res.status(400).json({
+      message: "image_url es obligatoria",
     });
   }
 
