@@ -25,7 +25,8 @@ public class OrganizerPanelActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         btnCreateEvent.setOnClickListener(v -> {
-            Toast.makeText(this, "Formulario de creación en SCRUM-109", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(OrganizerPanelActivity.this, CreateEventActivity.class);
+            startActivity(intent);
         });
 
         btnMyEvents.setOnClickListener(v -> {
