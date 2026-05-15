@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,11 +26,8 @@ public class ProfileFragment extends Fragment {
         btnOrganizerPanel = view.findViewById(R.id.btnOrganizerPanel);
 
         btnOrganizerPanel.setOnClickListener(v -> {
-            Toast.makeText(
-                    requireContext(),
-                    "Panel organizador se implementa en SCRUM-108",
-                    Toast.LENGTH_SHORT
-            ).show();
+            Intent intent = new Intent(requireContext(), OrganizerPanelActivity.class);
+            startActivity(intent);
         });
 
         return view;
