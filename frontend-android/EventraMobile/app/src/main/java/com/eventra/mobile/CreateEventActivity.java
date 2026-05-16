@@ -1,6 +1,5 @@
 package com.eventra.mobile;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
@@ -10,16 +9,30 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
+
 public class CreateEventActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
     private EditText etTitle, etDescription, etDate, etLocation, etCapacity, etImageUrl;
     private Button btnCreateEvent;
 
+    private SessionManager sessionManager;
+
+    private static final String CREATE_EVENT_URL = "http://172.20.10.11:3003/events";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
+        sessionManager = new SessionManager(this);
 
         btnBack = findViewById(R.id.btnBack);
         etTitle = findViewById(R.id.etTitle);
@@ -31,11 +44,10 @@ public class CreateEventActivity extends AppCompatActivity {
         btnCreateEvent = findViewById(R.id.btnCreateEvent);
 
         btnBack.setOnClickListener(v -> finish());
-
-        btnCreateEvent.setOnClickListener(v -> validateForm());
+        btnCreateEvent.setOnClickListener(v -> validateAndCreateEvent());
     }
 
-    private void validateForm() {
+    private void validateAndCreateEvent() {
         String title = etTitle.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
         String date = etDate.getText().toString().trim();
@@ -113,7 +125,90 @@ public class CreateEventActivity extends AppCompatActivity {
             return;
         }
 
-        Toast.makeText(this, "Formulario válido. Conexión en SCRUM-111", Toast.LENGTH_SHORT).show();
+        createEvent(title, description, date, location, capacity, imageUrl);
+    }
+
+    private void createEvent(String title, String description, String date,
+                             String location, int capacity, String imageUrl) {
+
+        String token = sessionManager.getToken();
+
+        if (token == null) {
+            Toast.makeText(this, "Debes iniciar sesión para crear eventos", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        btnCreateEvent.setEnabled(false);
+        btnCreateEvent.setText("Creando...");
+
+        new Thread(() -> {
+            HttpURLConnection conn = null;
+
+            try {
+                URL url = new URL(CREATE_EVENT_URL);
+                conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+                conn.setDoOutput(true);
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+
+                JSONObject json = new JSONObject();
+                json.put("title", title);
+                json.put("description", description);
+                json.put("event_date", date);
+                json.put("location", location);
+                json.put("capacity", capacity);
+                json.put("image_url", imageUrl);
+
+                OutputStream os = conn.getOutputStream();
+                os.write(json.toString().getBytes("UTF-8"));
+                os.close();
+
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = (responseCode >= 200 && responseCode < 300)
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                Scanner scanner = new Scanner(is).useDelimiter("\\A");
+                String response = scanner.hasNext() ? scanner.next() : "";
+                scanner.close();
+
+                runOnUiThread(() -> {
+                    btnCreateEvent.setEnabled(true);
+                    btnCreateEvent.setText("Crear evento");
+
+                    try {
+                        JSONObject responseJson = new JSONObject(response);
+                        String message = responseJson.optString("message", "Respuesta procesada");
+
+                        if (responseCode == 201) {
+                            Toast.makeText(CreateEventActivity.this, message, Toast.LENGTH_LONG).show();
+                            finish();
+                        } else {
+                            Toast.makeText(CreateEventActivity.this, message, Toast.LENGTH_LONG).show();
+                        }
+
+                    } catch (Exception e) {
+                        Toast.makeText(CreateEventActivity.this, "Respuesta inválida del servidor", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    btnCreateEvent.setEnabled(true);
+                    btnCreateEvent.setText("Crear evento");
+                    Toast.makeText(CreateEventActivity.this, "No fue posible conectar con el backend", Toast.LENGTH_LONG).show();
+                });
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+        }).start();
     }
 
     private boolean isValidUrl(String url) {
