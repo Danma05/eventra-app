@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
+import android.content.Intent;
 
 public class CreateEventActivity extends AppCompatActivity {
 
@@ -186,7 +187,25 @@ public class CreateEventActivity extends AppCompatActivity {
                         String message = responseJson.optString("message", "Respuesta procesada");
 
                         if (responseCode == 201) {
-                            Toast.makeText(CreateEventActivity.this, message, Toast.LENGTH_LONG).show();
+
+                            Toast.makeText(
+                                    CreateEventActivity.this,
+                                    "Evento creado correctamente",
+                                    Toast.LENGTH_LONG
+                            ).show();
+
+                            Intent intent = new Intent(
+                                    CreateEventActivity.this,
+                                    MainNavActivity.class
+                            );
+
+                            intent.putExtra("open_events", true);
+
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                            startActivity(intent);
+
                             finish();
                         } else {
                             Toast.makeText(CreateEventActivity.this, message, Toast.LENGTH_LONG).show();

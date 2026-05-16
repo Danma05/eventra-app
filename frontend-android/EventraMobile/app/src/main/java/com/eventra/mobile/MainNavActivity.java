@@ -18,8 +18,6 @@ public class MainNavActivity extends AppCompatActivity {
 
         bottomNavigation = findViewById(R.id.bottomNavigation);
 
-        loadFragment(new HomeFragment());
-
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -50,6 +48,14 @@ public class MainNavActivity extends AppCompatActivity {
 
             return false;
         });
+
+        boolean openEvents = getIntent().getBooleanExtra("open_events", false);
+
+        if (openEvents) {
+            bottomNavigation.setSelectedItemId(R.id.nav_events);
+        } else {
+            bottomNavigation.setSelectedItemId(R.id.nav_home);
+        }
     }
 
     public void goToEventsTab() {
