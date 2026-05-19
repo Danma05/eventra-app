@@ -6,6 +6,7 @@ const {
   postEvent,
   putEvent,
   destroyEvent,
+  getOrganizerEvents,
 } = require("../controllers/eventController");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -17,6 +18,7 @@ const {
 
 const router = express.Router();
 
+router.get("/organizer/my", verifyToken, getOrganizerEvents);
 // Públicos
 router.get("/", getEvents);
 router.get("/:id", getEvent);
