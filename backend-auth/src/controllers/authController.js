@@ -2,7 +2,7 @@ import { registerUser, loginUser } from "../services/authService.js";
 
 export const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, account_type } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -10,8 +10,8 @@ export const register = async (req, res) => {
       });
     }
 
-    const user = await registerUser(email, password);
-
+    const user = await registerUser(email, password, account_type);
+    
     return res.status(201).json({
       message: "Usuario registrado correctamente",
       user

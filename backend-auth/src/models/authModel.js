@@ -8,13 +8,14 @@ export const findUserByEmail = async (email) => {
   return result.rows[0];
 };
 
-export const createUser = async (email, passwordHash) => {
+export const createUser = async (email, passwordHash, accountType) => {
   const result = await pool.query(
-    `INSERT INTO users_auth (email, password_hash)
-     VALUES ($1, $2)
-     RETURNING id, email, is_verified, status, created_at`,
-    [email, passwordHash]
+    `INSERT INTO users_auth (email, password_hash, account_type)
+     VALUES ($1, $2, $3)
+     RETURNING id, email, account_type, is_verified, status, created_at`,
+    [email, passwordHash, accountType]
   );
+
   return result.rows[0];
 };
 

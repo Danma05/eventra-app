@@ -7,15 +7,19 @@ import {
 } from "../models/authModel.js";
 import { generateToken } from "../utils/jwt.js";
 
-export const registerUser = async (email, password) => {
+export const registerUser = async (email, password, accountType = "RUNNER") => {
   const existingUser = await findUserByEmail(email);
 
   if (existingUser) {
     throw new Error("El correo ya está registrado");
   }
 
+  if (!["RUNNER", "ORGANIZER"].includes(accountType)) {
+    throw new Error("Tipo de cuenta inválido");
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await createUser(email, hashedPassword);
+  const user = await createUser(email, hashedPassword, accountType);
 
   return user;
 };
@@ -48,6 +52,7 @@ export const loginUser = async (email, password) => {
     user: {
       id: user.id,
       email: user.email,
+      account_type: user.account_type,
       status: user.status,
       isVerified: user.is_verified
     }

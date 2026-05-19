@@ -8,6 +8,7 @@ public class SessionManager {
     private static final String PREF_NAME = "eventra_session";
     private static final String KEY_TOKEN = "auth_token";
     private static final String KEY_EMAIL = "user_email";
+    private static final String KEY_ROLE = "user_role";
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
 
     private final SharedPreferences sharedPreferences;
@@ -18,9 +19,10 @@ public class SessionManager {
         editor = sharedPreferences.edit();
     }
 
-    public void saveSession(String token, String email) {
+    public void saveSession(String token, String email, String role) {
         editor.putString(KEY_TOKEN, token);
         editor.putString(KEY_EMAIL, email);
+        editor.putString(KEY_ROLE, role);
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.apply();
     }
@@ -31,6 +33,10 @@ public class SessionManager {
 
     public String getEmail() {
         return sharedPreferences.getString(KEY_EMAIL, null);
+    }
+
+    public String getRole() {
+        return sharedPreferences.getString(KEY_ROLE, "");
     }
 
     public boolean isLoggedIn() {

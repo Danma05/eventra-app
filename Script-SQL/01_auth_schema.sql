@@ -13,6 +13,7 @@ CREATE TABLE users_auth (
     id BIGSERIAL PRIMARY KEY,
     email VARCHAR(150) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
+    account_type VARCHAR(20) NOT NULL DEFAULT 'RUNNER',
     is_verified BOOLEAN NOT NULL DEFAULT FALSE,
     status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
     failed_login_attempts INT NOT NULL DEFAULT 0,
@@ -23,6 +24,9 @@ CREATE TABLE users_auth (
 
     CONSTRAINT chk_users_auth_status
         CHECK (status IN ('ACTIVE', 'SUSPENDED', 'BLOCKED')),
+
+    CONSTRAINT chk_users_auth_account_type
+        CHECK (account_type IN ('RUNNER', 'ORGANIZER')),
 
     CONSTRAINT chk_failed_login_attempts
         CHECK (failed_login_attempts >= 0)
