@@ -4,6 +4,7 @@ const {
   createEvent,
   updateEvent,
   deleteEvent,
+  getEventsByOrganizer,
 } = require("../models/eventModel");
 
 const listEvents = async () => {
@@ -98,10 +99,15 @@ const removeEvent = async (id, authUserId) => {
   return deletedEvent;
 };
 
+const listEventsByOrganizer = async (authUserId) => {
+  return await getEventsByOrganizer(authUserId);
+};
+
 module.exports = {
   listEvents,
   findEventById,
   registerEvent,
   editEvent,
   removeEvent,
+  listEventsByOrganizer,
 };

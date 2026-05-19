@@ -4,6 +4,7 @@ const {
   registerEvent,
   editEvent,
   removeEvent,
+  listEventsByOrganizer,
 } = require("../services/eventService");
 
 const getEvents = async (req, res) => {
@@ -82,10 +83,25 @@ const destroyEvent = async (req, res) => {
   }
 };
 
+const getOrganizerEvents = async (req, res) => {
+  try {
+    const authUserId = req.user.id;
+
+    const events = await listEventsByOrganizer(authUserId);
+
+    return res.status(200).json(events);
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getEvents,
   getEvent,
   postEvent,
   putEvent,
   destroyEvent,
+  getOrganizerEvents,
 };

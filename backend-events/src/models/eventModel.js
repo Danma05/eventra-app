@@ -65,10 +65,23 @@ const deleteEvent = async (id) => {
   return result.rows[0];
 };
 
+const getEventsByOrganizer = async (organizerAuthUserId) => {
+  const result = await pool.query(
+    `SELECT *
+     FROM events
+     WHERE organizer_auth_user_id = $1
+     ORDER BY created_at DESC`,
+    [organizerAuthUserId]
+  );
+
+  return result.rows;
+};
+
 module.exports = {
   getAllEvents,
   getEventById,
   createEvent,
   updateEvent,
   deleteEvent,
+  getEventsByOrganizer,
 };
