@@ -41,7 +41,9 @@
                 android:background="@drawable/bg_input"
                 android:hint="Username"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
 
             <EditText
                 android:id="@+id/etFirstName"
@@ -51,7 +53,10 @@
                 android:background="@drawable/bg_input"
                 android:hint="Nombre"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
 
             <EditText
                 android:id="@+id/etLastName"
@@ -61,7 +66,10 @@
                 android:background="@drawable/bg_input"
                 android:hint="Apellido"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
 
             <EditText
                 android:id="@+id/etPhone"
@@ -72,7 +80,10 @@
                 android:hint="Teléfono"
                 android:inputType="phone"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
 
             <EditText
                 android:id="@+id/etBirthDate"
@@ -84,7 +95,9 @@
                 android:focusable="false"
                 android:hint="Fecha nacimiento"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
 
             <EditText
                 android:id="@+id/etGender"
@@ -94,7 +107,10 @@
                 android:background="@drawable/bg_input"
                 android:hint="Género: MALE, FEMALE, OTHER"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
 
             <EditText
                 android:id="@+id/etCity"
@@ -104,7 +120,10 @@
                 android:background="@drawable/bg_input"
                 android:hint="Ciudad"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
 
             <EditText
                 android:id="@+id/etCountry"
@@ -114,7 +133,10 @@
                 android:background="@drawable/bg_input"
                 android:hint="País"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
 
             <EditText
                 android:id="@+id/etImageUrl"
@@ -125,7 +147,10 @@
                 android:hint="URL imagen perfil"
                 android:inputType="textUri"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
 
             <EditText
                 android:id="@+id/etBio"
@@ -135,7 +160,10 @@
                 android:background="@drawable/bg_input"
                 android:gravity="top"
                 android:hint="Biografía"
-                android:padding="16dp" />
+                android:padding="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
+
         </LinearLayout>
 
         <Button

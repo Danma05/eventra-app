@@ -26,7 +26,7 @@ public class ProfileFragment extends Fragment {
     private SessionManager sessionManager;
 
     private static final String PROFILE_URL =
-            "http://172.20.10.11:3002/users/profile";
+            "http://172.20.10.11:3002/users/profile/me";
 
     @Nullable
     @Override
