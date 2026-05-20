@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -27,6 +28,12 @@ public class ProfileFragment extends Fragment {
 
     private static final String PROFILE_URL =
             "http://172.20.10.11:3002/users/profile/me";
+
+    private static final String MY_REGISTRATIONS_URL =
+            "http://172.20.10.11:3004/registrations/my";
+
+    private static final String ORGANIZER_EVENTS_URL =
+            "http://172.20.10.11:3003/events/organizer/my";
 
     @Nullable
     @Override
@@ -59,6 +66,7 @@ public class ProfileFragment extends Fragment {
 
         loadProfile();
         validateOrganizerButton();
+        loadProfileStats();
 
         return view;
     }
@@ -176,10 +184,111 @@ public class ProfileFragment extends Fragment {
         }).start();
     }
 
+    private void loadProfileStats() {
+        String token = sessionManager.getToken();
+
+        if (token == null || token.trim().isEmpty()) {
+            return;
+        }
+
+        new Thread(() -> {
+            int registeredCount = getArrayCount(MY_REGISTRATIONS_URL, token);
+            int organizedCount = getArrayCount(ORGANIZER_EVENTS_URL, token);
+            int completedCount = getCompletedEventsCount(ORGANIZER_EVENTS_URL, token);
+
+            requireActivity().runOnUiThread(() -> {
+                tvEventsRegistered.setText(registeredCount + "\nInscritos");
+                tvEventsOrganized.setText(organizedCount + "\nOrganizados");
+                tvEventsCompleted.setText(completedCount + "\nCompletados");
+            });
+        }).start();
+    }
+
+    private int getArrayCount(String urlString, String token) {
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(urlString);
+            conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "Bearer " + token);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+
+            int responseCode = conn.getResponseCode();
+
+            InputStream is = responseCode == 200
+                    ? conn.getInputStream()
+                    : conn.getErrorStream();
+
+            Scanner scanner = new Scanner(is).useDelimiter("\\A");
+            String response = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+
+            if (responseCode == 200) {
+                JSONArray array = new JSONArray(response);
+                return array.length();
+            }
+
+        } catch (Exception ignored) {
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+
+        return 0;
+    }
+
+    private int getCompletedEventsCount(String urlString, String token) {
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(urlString);
+            conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "Bearer " + token);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+
+            int responseCode = conn.getResponseCode();
+
+            InputStream is = responseCode == 200
+                    ? conn.getInputStream()
+                    : conn.getErrorStream();
+
+            Scanner scanner = new Scanner(is).useDelimiter("\\A");
+            String response = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+
+            if (responseCode == 200) {
+                JSONArray array = new JSONArray(response);
+                int count = 0;
+
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject obj = array.getJSONObject(i);
+
+                    if ("FINISHED".equalsIgnoreCase(obj.optString("status"))) {
+                        count++;
+                    }
+                }
+
+                return count;
+            }
+
+        } catch (Exception ignored) {
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+
+        return 0;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         loadProfile();
         validateOrganizerButton();
+        loadProfileStats();
     }
 }

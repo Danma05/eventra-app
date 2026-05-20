@@ -52,15 +52,6 @@ public class EventsActivity extends AppCompatActivity {
     }
 
     private void setupRecycler() {
-        /*adapter = new EventAdapter(eventList, event -> {
-            Intent intent = new Intent(EventsActivity.this, EventDetailActivity.class);
-            intent.putExtra("event_id", event.getId());
-            startActivity(intent);
-        });
-        adapter = new EventAdapter(eventList, event ->
-                Toast.makeText(EventsActivity.this, "Detalle se implementa en SCRUM-59", Toast.LENGTH_SHORT).show()
-        );*/
-
         adapter = new EventAdapter(eventList, event -> {
             Intent intent = new Intent(EventsActivity.this, EventDetailActivity.class);
             intent.putExtra("event_id", event.getId());
