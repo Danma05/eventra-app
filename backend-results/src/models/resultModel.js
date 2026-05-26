@@ -3,16 +3,8 @@ const pool = require("../config/db");
 const createResult = async (data) => {
   const result = await pool.query(
     `INSERT INTO event_results
-     (
-       event_id,
-       auth_user_id,
-       bib_number,
-       category,
-       total_time_seconds,
-       pace_seconds_per_km,
-       distance_km,
-       result_status
-     )
+     (event_id, auth_user_id, bib_number, category, total_time_seconds,
+      pace_seconds_per_km, distance_km, result_status)
      VALUES ($1, $2, $3, $4, $5, $6, $7, 'DRAFT')
      RETURNING *`,
     [
@@ -29,13 +21,24 @@ const createResult = async (data) => {
   return result.rows[0];
 };
 
+const getPublishedEventIds = async () => {
+  const result = await pool.query(
+    `SELECT DISTINCT event_id
+     FROM event_results
+     WHERE result_status = 'PUBLISHED'
+     ORDER BY event_id DESC`
+  );
+
+  return result.rows;
+};
+
 const getResultsByEvent = async (eventId) => {
   const result = await pool.query(
     `SELECT *
      FROM event_results
      WHERE event_id = $1
        AND result_status = 'PUBLISHED'
-     ORDER BY position ASC, total_time_seconds ASC`,
+     ORDER BY position ASC`,
     [eventId]
   );
 
@@ -49,19 +52,6 @@ const getDraftResultsByEvent = async (eventId) => {
      WHERE event_id = $1
      ORDER BY total_time_seconds ASC`,
     [eventId]
-  );
-
-  return result.rows;
-};
-
-const getMyResults = async (authUserId) => {
-  const result = await pool.query(
-    `SELECT *
-     FROM event_results
-     WHERE auth_user_id = $1
-       AND result_status = 'PUBLISHED'
-     ORDER BY published_at DESC`,
-    [authUserId]
   );
 
   return result.rows;
@@ -108,22 +98,10 @@ const publishResultsByEvent = async (eventId) => {
   }
 };
 
-const deleteResultById = async (resultId) => {
-  const result = await pool.query(
-    `DELETE FROM event_results
-     WHERE id = $1
-     RETURNING *`,
-    [resultId]
-  );
-
-  return result.rows[0];
-};
-
 module.exports = {
   createResult,
+  getPublishedEventIds,
   getResultsByEvent,
   getDraftResultsByEvent,
-  getMyResults,
   publishResultsByEvent,
-  deleteResultById,
 };

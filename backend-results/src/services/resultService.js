@@ -1,11 +1,15 @@
+const axios = require("axios");
+
 const {
   createResult,
+  getPublishedEventIds,
   getResultsByEvent,
   getDraftResultsByEvent,
-  getMyResults,
   publishResultsByEvent,
-  deleteResultById,
 } = require("../models/resultModel");
+
+const EVENTS_SERVICE_URL = process.env.EVENTS_SERVICE_URL;
+const USER_SERVICE_URL = process.env.USER_SERVICE_URL;
 
 const addResult = async (data) => {
   if (!data.event_id || !data.auth_user_id || !data.total_time_seconds) {
@@ -14,37 +18,67 @@ const addResult = async (data) => {
     throw error;
   }
 
-  if (data.total_time_seconds <= 0) {
-    const error = new Error("El tiempo total debe ser mayor a 0");
-    error.statusCode = 400;
-    throw error;
-  }
-
   return await createResult(data);
 };
 
-const listPublishedResultsByEvent = async (eventId) => {
-  if (!eventId) {
-    const error = new Error("eventId es obligatorio");
-    error.statusCode = 400;
-    throw error;
+const listPublishedEvents = async () => {
+  const rows = await getPublishedEventIds();
+
+  const events = [];
+
+  for (const row of rows) {
+    try {
+      const response = await axios.get(`${EVENTS_SERVICE_URL}/events/${row.event_id}`);
+      events.push(response.data);
+    } catch {
+      events.push({
+        id: row.event_id,
+        title: `Evento ${row.event_id}`,
+        event_date: null,
+        distance_km: null,
+      });
+    }
   }
 
-  return await getResultsByEvent(eventId);
+  return events;
+};
+
+const listPublishedResultsByEvent = async (eventId, search) => {
+  const results = await getResultsByEvent(eventId);
+
+  const enriched = [];
+
+  for (const result of results) {
+    let runnerName = `Corredor #${result.auth_user_id}`;
+
+    try {
+      const profileResponse = await axios.get(
+        `${USER_SERVICE_URL}/users/profile/${result.auth_user_id}`
+      );
+
+      const profile = profileResponse.data;
+      runnerName = `${profile.first_name} ${profile.last_name}`;
+    } catch {}
+
+    enriched.push({
+      ...result,
+      runner_name: runnerName,
+    });
+  }
+
+  if (search && search.trim() !== "") {
+    const term = search.toLowerCase();
+
+    return enriched.filter((item) =>
+      item.runner_name.toLowerCase().includes(term)
+    );
+  }
+
+  return enriched;
 };
 
 const listDraftResultsByEvent = async (eventId) => {
-  if (!eventId) {
-    const error = new Error("eventId es obligatorio");
-    error.statusCode = 400;
-    throw error;
-  }
-
   return await getDraftResultsByEvent(eventId);
-};
-
-const listMyResults = async (authUserId) => {
-  return await getMyResults(authUserId);
 };
 
 const publishEventResults = async (eventId) => {
@@ -59,23 +93,10 @@ const publishEventResults = async (eventId) => {
   return await publishResultsByEvent(eventId);
 };
 
-const removeResult = async (resultId) => {
-  const deleted = await deleteResultById(resultId);
-
-  if (!deleted) {
-    const error = new Error("Resultado no encontrado");
-    error.statusCode = 404;
-    throw error;
-  }
-
-  return deleted;
-};
-
 module.exports = {
   addResult,
+  listPublishedEvents,
   listPublishedResultsByEvent,
   listDraftResultsByEvent,
-  listMyResults,
   publishEventResults,
-  removeResult,
 };

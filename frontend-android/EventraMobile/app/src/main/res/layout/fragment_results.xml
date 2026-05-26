@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -18,36 +18,75 @@
             android:textSize="26sp"
             android:textStyle="bold" />
 
-        <TextView
+        <EditText
+            android:id="@+id/etSearchRunner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Consulta tu participación en eventos de Eventra."
-            android:textColor="@color/text_secondary"
-            android:textSize="14sp" />
+            android:layout_height="48dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_input"
+            android:hint="Buscar corredor..."
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
 
-        <TextView
-            android:id="@+id/tvResultsSummary"
-            android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:layout_marginTop="22dp"
-            android:background="@drawable/bg_card_white"
-            android:gravity="center"
-            android:text="0\nEventos inscritos"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvResultsList"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:background="@drawable/bg_card_white"
-            android:padding="18dp"
-            android:text="Cargando resultados..."
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/layoutPublishedEvents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/tvSelectedEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="Selecciona un evento"
             android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvSelectedEventInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Resultados publicados"
+            android:textColor="@color/text_secondary"
             android:textSize="14sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:nestedScrollingEnabled="false" />
+
+        <TextView
+            android:id="@+id/tvResultsEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="Aún no hay resultados publicados."
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/bg_card_white"
+            android:padding="16dp"
+            android:text="Leyenda\n🥇 1er lugar\n🥈 2do lugar\n🥉 3er lugar"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
 
     </LinearLayout>
 </ScrollView>

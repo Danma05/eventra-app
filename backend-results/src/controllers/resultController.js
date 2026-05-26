@@ -1,10 +1,9 @@
 const {
   addResult,
+  listPublishedEvents,
   listPublishedResultsByEvent,
   listDraftResultsByEvent,
-  listMyResults,
   publishEventResults,
-  removeResult,
 } = require("../services/resultService");
 
 const postResult = async (req, res) => {
@@ -22,11 +21,24 @@ const postResult = async (req, res) => {
   }
 };
 
+const getPublishedEvents = async (req, res) => {
+  try {
+    const events = await listPublishedEvents();
+
+    return res.status(200).json(events);
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
+};
+
 const getEventResults = async (req, res) => {
   try {
     const { eventId } = req.params;
+    const { search } = req.query;
 
-    const results = await listPublishedResultsByEvent(eventId);
+    const results = await listPublishedResultsByEvent(eventId, search);
 
     return res.status(200).json(results);
   } catch (error) {
@@ -41,20 +53,6 @@ const getEventDraftResults = async (req, res) => {
     const { eventId } = req.params;
 
     const results = await listDraftResultsByEvent(eventId);
-
-    return res.status(200).json(results);
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({
-      message: error.message,
-    });
-  }
-};
-
-const getMyResultList = async (req, res) => {
-  try {
-    const authUserId = req.user.id;
-
-    const results = await listMyResults(authUserId);
 
     return res.status(200).json(results);
   } catch (error) {
@@ -81,28 +79,10 @@ const putPublishResults = async (req, res) => {
   }
 };
 
-const deleteResult = async (req, res) => {
-  try {
-    const { resultId } = req.params;
-
-    const deleted = await removeResult(resultId);
-
-    return res.status(200).json({
-      message: "Resultado eliminado correctamente",
-      deleted,
-    });
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({
-      message: error.message,
-    });
-  }
-};
-
 module.exports = {
   postResult,
+  getPublishedEvents,
   getEventResults,
   getEventDraftResults,
-  getMyResultList,
   putPublishResults,
-  deleteResult,
 };
