@@ -33,10 +33,7 @@ public class HomeActivity extends AppCompatActivity {
         String email = sessionManager.getEmail();
         tvWelcome.setText("Bienvenido a Eventra\n" + email);
 
-        btnGoProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-            startActivity(intent);
-        });
+
 
         btnGoEvents.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, EventsActivity.class);

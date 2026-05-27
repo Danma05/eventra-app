@@ -1,12 +1,12 @@
 const {
   registerProfile,
   getProfileByAuthUserId,
+  updateProfileByAuthUserId,
 } = require("../services/userService");
 
 const createProfile = async (req, res) => {
   try {
     const authUserId = req.user.id;
-
     const { username, first_name, last_name } = req.body;
 
     if (!username || !first_name || !last_name) {
@@ -22,7 +22,7 @@ const createProfile = async (req, res) => {
       profile,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.status(error.statusCode || 400).json({
       message: error.message,
     });
   }
@@ -35,7 +35,24 @@ const getMyProfile = async (req, res) => {
 
     return res.status(200).json(profile);
   } catch (error) {
-    return res.status(404).json({
+    return res.status(error.statusCode || 404).json({
+      message: error.message,
+    });
+  }
+};
+
+const updateMyProfile = async (req, res) => {
+  try {
+    const authUserId = req.user.id;
+
+    const profile = await updateProfileByAuthUserId(authUserId, req.body);
+
+    return res.status(200).json({
+      message: "Perfil actualizado correctamente",
+      profile,
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -48,7 +65,7 @@ const getProfileByAuthId = async (req, res) => {
 
     return res.status(200).json(profile);
   } catch (error) {
-    return res.status(404).json({
+    return res.status(error.statusCode || 404).json({
       message: error.message,
     });
   }
@@ -57,5 +74,6 @@ const getProfileByAuthId = async (req, res) => {
 module.exports = {
   createProfile,
   getMyProfile,
+  updateMyProfile,
   getProfileByAuthId,
 };

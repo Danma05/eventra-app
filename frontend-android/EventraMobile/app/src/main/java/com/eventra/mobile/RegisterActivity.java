@@ -32,14 +32,18 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView tvTerms;
 
     private boolean isPasswordVisible = false;
+    private SessionManager sessionManager;
 
-    // IP local real de tu computador
     private static final String REGISTER_URL = "http://172.20.10.11:3001/auth/register";
+    private static final String LOGIN_URL = "http://172.20.10.11:3001/auth/login";
+    private static final String CREATE_PROFILE_URL = "http://172.20.10.11:3002/users/profile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        sessionManager = new SessionManager(this);
 
         initViews();
         setupEvents();
@@ -112,6 +116,12 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        if (!fullName.contains(" ")) {
+            etName.setError("Ingresa nombre y apellido");
+            etName.requestFocus();
+            return;
+        }
+
         if (email.isEmpty()) {
             etEmail.setError("El correo electrónico es obligatorio");
             etEmail.requestFocus();
@@ -136,68 +146,70 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        registerUser(email, password);
+        String accountType = rbOrganizer.isChecked() ? "ORGANIZER" : "RUNNER";
+
+        registerUser(fullName, email, password, accountType);
     }
 
-    private void registerUser(String email, String password) {
+    private void registerUser(String fullName, String email, String password, String accountType) {
         btnRegister.setEnabled(false);
         btnRegister.setText("Registrando...");
 
         new Thread(() -> {
-            HttpURLConnection conn = null;
-
             try {
-                URL url = new URL(REGISTER_URL);
-                conn = (HttpURLConnection) url.openConnection();
+                boolean registered = registerAuth(email, password, accountType);
 
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(10000);
+                if (!registered) {
+                    runOnUiThread(() -> {
+                        btnRegister.setEnabled(true);
+                        btnRegister.setText("Crear cuenta");
+                    });
+                    return;
+                }
 
-                JSONObject json = new JSONObject();
-                json.put("email", email);
-                json.put("password", password);
+                JSONObject loginData = loginAuth(email, password);
 
-                OutputStream os = conn.getOutputStream();
-                os.write(json.toString().getBytes("UTF-8"));
-                os.close();
+                if (loginData == null) {
+                    runOnUiThread(() -> {
+                        btnRegister.setEnabled(true);
+                        btnRegister.setText("Crear cuenta");
+                        Toast.makeText(RegisterActivity.this, "Cuenta creada, pero no fue posible iniciar sesión", Toast.LENGTH_LONG).show();
+                    });
+                    return;
+                }
 
-                int responseCode = conn.getResponseCode();
+                String token = loginData.getString("token");
+                JSONObject userJson = loginData.getJSONObject("user");
+                String role = userJson.optString("account_type", accountType);
 
-                InputStream is = (responseCode >= 200 && responseCode < 300)
-                        ? conn.getInputStream()
-                        : conn.getErrorStream();
-
-                Scanner scanner = new Scanner(is).useDelimiter("\\A");
-                String response = scanner.hasNext() ? scanner.next() : "";
-                scanner.close();
+                boolean profileCreated = createBasicProfile(token, fullName);
 
                 runOnUiThread(() -> {
                     btnRegister.setEnabled(true);
                     btnRegister.setText("Crear cuenta");
 
-                    try {
-                        JSONObject responseJson = new JSONObject(response);
+                    if (profileCreated) {
+                        sessionManager.saveSession(token, email, role);
 
-                        if (responseCode == 201) {
-                            Toast.makeText(
-                                    RegisterActivity.this,
-                                    "Registro exitoso. Ahora puedes iniciar sesión.",
-                                    Toast.LENGTH_LONG
-                            ).show();
+                        Toast.makeText(
+                                RegisterActivity.this,
+                                "Registro exitoso",
+                                Toast.LENGTH_LONG
+                        ).show();
 
-                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
+                        Intent intent = new Intent(RegisterActivity.this, MainNavActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(
+                                RegisterActivity.this,
+                                "Cuenta creada, pero falta completar perfil",
+                                Toast.LENGTH_LONG
+                        ).show();
 
-                        } else {
-                            String message = responseJson.optString("message", "Error al registrar usuario");
-                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(RegisterActivity.this, "Respuesta inválida del servidor", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                 });
 
@@ -205,13 +217,157 @@ public class RegisterActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     btnRegister.setEnabled(true);
                     btnRegister.setText("Crear cuenta");
-                    Toast.makeText(RegisterActivity.this, "No fue posible conectar con el backend", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, "No fue posible completar el registro", Toast.LENGTH_LONG).show();
                 });
-            } finally {
-                if (conn != null) {
-                    conn.disconnect();
-                }
             }
         }).start();
+    }
+
+    private boolean registerAuth(String email, String password, String accountType) {
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(REGISTER_URL);
+            conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+
+            JSONObject json = new JSONObject();
+            json.put("email", email);
+            json.put("password", password);
+            json.put("account_type", accountType);
+
+            OutputStream os = conn.getOutputStream();
+            os.write(json.toString().getBytes("UTF-8"));
+            os.close();
+
+            int responseCode = conn.getResponseCode();
+
+            InputStream is = (responseCode >= 200 && responseCode < 300)
+                    ? conn.getInputStream()
+                    : conn.getErrorStream();
+
+            Scanner scanner = new Scanner(is).useDelimiter("\\A");
+            String response = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+
+            if (responseCode == 201) {
+                return true;
+            }
+
+            JSONObject responseJson = new JSONObject(response);
+            String message = responseJson.optString("message", "Error al registrar usuario");
+
+            runOnUiThread(() ->
+                    Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show()
+            );
+
+            return false;
+
+        } catch (Exception e) {
+            runOnUiThread(() ->
+                    Toast.makeText(RegisterActivity.this, "No fue posible conectar con Auth", Toast.LENGTH_LONG).show()
+            );
+            return false;
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+    }
+
+    private JSONObject loginAuth(String email, String password) {
+        HttpURLConnection conn = null;
+
+        try {
+            URL url = new URL(LOGIN_URL);
+            conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+
+            JSONObject json = new JSONObject();
+            json.put("email", email);
+            json.put("password", password);
+
+            OutputStream os = conn.getOutputStream();
+            os.write(json.toString().getBytes("UTF-8"));
+            os.close();
+
+            int responseCode = conn.getResponseCode();
+
+            InputStream is = (responseCode >= 200 && responseCode < 300)
+                    ? conn.getInputStream()
+                    : conn.getErrorStream();
+
+            Scanner scanner = new Scanner(is).useDelimiter("\\A");
+            String response = scanner.hasNext() ? scanner.next() : "";
+            scanner.close();
+
+            if (responseCode == 200) {
+                return new JSONObject(response);
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            return null;
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+    }
+
+    private boolean createBasicProfile(String token, String fullName) {
+        HttpURLConnection conn = null;
+
+        try {
+            String[] parts = fullName.trim().split("\\s+", 2);
+            String firstName = parts[0];
+            String lastName = parts.length > 1 ? parts[1] : "Usuario";
+
+            String username = generateUsername(firstName, lastName);
+
+            URL url = new URL(CREATE_PROFILE_URL);
+            conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            conn.setRequestProperty("Authorization", "Bearer " + token);
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+
+            JSONObject json = new JSONObject();
+            json.put("username", username);
+            json.put("first_name", firstName);
+            json.put("last_name", lastName);
+
+            OutputStream os = conn.getOutputStream();
+            os.write(json.toString().getBytes("UTF-8"));
+            os.close();
+
+            int responseCode = conn.getResponseCode();
+
+            return responseCode == 201 || responseCode == 200;
+
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (conn != null) conn.disconnect();
+        }
+    }
+
+    private String generateUsername(String firstName, String lastName) {
+        String cleanFirst = firstName.toLowerCase().replaceAll("[^a-z0-9]", "");
+        String cleanLast = lastName.toLowerCase().replaceAll("[^a-z0-9]", "");
+
+        int random = (int) (Math.random() * 9000) + 1000;
+
+        return cleanFirst + cleanLast + random;
     }
 }

@@ -105,6 +105,12 @@ public class EventsFragment extends Fragment {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject obj = jsonArray.getJSONObject(i);
 
+                            String status = obj.optString("status", "ACTIVE");
+
+                            if (!"ACTIVE".equalsIgnoreCase(status)) {
+                                continue;
+                            }
+
                             eventList.add(new Event(
                                     obj.optLong("id"),
                                     obj.optLong("organizer_auth_user_id"),
@@ -113,9 +119,10 @@ public class EventsFragment extends Fragment {
                                     obj.optString("event_date"),
                                     obj.optString("location"),
                                     obj.optInt("capacity"),
-                                    obj.optString("status"),
+                                    status,
                                     obj.optString("image_url")
                             ));
+                            
                         }
 
                         adapter.notifyDataSetChanged();

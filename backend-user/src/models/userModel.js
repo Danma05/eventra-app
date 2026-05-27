@@ -41,6 +41,7 @@ const findProfileByAuthUserId = async (authUserId) => {
     `SELECT * FROM user_profile WHERE auth_user_id = $1`,
     [authUserId]
   );
+
   return result.rows[0];
 };
 
@@ -49,6 +50,43 @@ const findProfileByUsername = async (username) => {
     `SELECT * FROM user_profile WHERE username = $1`,
     [username]
   );
+
+  return result.rows[0];
+};
+
+const updateUserProfile = async (authUserId, data) => {
+  const result = await pool.query(
+    `UPDATE user_profile
+     SET
+       username = $1,
+       first_name = $2,
+       last_name = $3,
+       phone = $4,
+       birth_date = $5,
+       gender = COALESCE($6, 'PREFER_NOT_TO_SAY'),
+       city = $7,
+       country = $8,
+       bio = $9,
+       profile_image_url = $10,
+       profile_status = 'ACTIVE',
+       updated_at = CURRENT_TIMESTAMP
+     WHERE auth_user_id = $11
+     RETURNING *`,
+    [
+      data.username,
+      data.first_name,
+      data.last_name,
+      data.phone || null,
+      data.birth_date || null,
+      data.gender || "PREFER_NOT_TO_SAY",
+      data.city || null,
+      data.country || null,
+      data.bio || null,
+      data.profile_image_url || null,
+      authUserId,
+    ]
+  );
+
   return result.rows[0];
 };
 
@@ -56,4 +94,5 @@ module.exports = {
   createUserProfile,
   findProfileByAuthUserId,
   findProfileByUsername,
+  updateUserProfile,
 };

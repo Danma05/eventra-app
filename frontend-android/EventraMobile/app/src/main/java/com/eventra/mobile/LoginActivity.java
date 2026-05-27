@@ -150,9 +150,11 @@ public class LoginActivity extends AppCompatActivity {
                         if (responseCode == 200) {
                             String token = responseJson.getString("token");
                             JSONObject userJson = responseJson.getJSONObject("user");
-                            String userEmail = userJson.getString("email");
 
-                            sessionManager.saveSession(token, userEmail);
+                            String userEmail = userJson.getString("email");
+                            String role = userJson.optString("account_type", "RUNNER");
+
+                            sessionManager.saveSession(token, userEmail, role);
 
                             Toast.makeText(LoginActivity.this, "Inicio de sesión exitoso", Toast.LENGTH_LONG).show();
                             goToHome();
