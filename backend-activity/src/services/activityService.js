@@ -1,3 +1,5 @@
+const { checkUserRegistration } = require("../clients/registrationClient");
+
 const {
   findActiveSessionByUser,
   createActivitySession,
@@ -7,10 +9,18 @@ const {
   getActiveParticipantsByEvent,
 } = require("../models/activityModel");
 
-const startActivity = async (eventId, authUserId) => {
+const startActivity = async (eventId, authUserId, token) => {
   if (!eventId) {
     const error = new Error("event_id es obligatorio");
     error.statusCode = 400;
+    throw error;
+  }
+
+  const registration = await checkUserRegistration(eventId, token);
+
+  if (!registration.registered) {
+    const error = new Error("No estás inscrito en este evento");
+    error.statusCode = 403;
     throw error;
   }
 

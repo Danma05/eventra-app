@@ -4,6 +4,7 @@ const {
   getRegistrationCounts,
   getOrganizerCounts,
   listParticipantsByEvent,
+  validateUserRegistration,
 } = require("../services/registrationService");
 
 const postRegistration = async (req, res) => {
@@ -105,10 +106,26 @@ const getEventParticipants = async (req, res) => {
   }
 };
 
+const getRegistrationCheck = async (req, res) => {
+  try {
+    const authUserId = req.user.id;
+    const { event_id } = req.query;
+
+    const result = await validateUserRegistration(event_id, authUserId);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   postRegistration,
   getMyRegistrationList,
   postRegistrationCounts,
   getOrganizerRegistrationCounts,
   getEventParticipants,
+  getRegistrationCheck,
 };

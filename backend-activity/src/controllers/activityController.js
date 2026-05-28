@@ -8,9 +8,10 @@ const {
 const postStartActivity = async (req, res) => {
   try {
     const authUserId = req.user.id;
+    const token = req.headers.authorization;
     const { event_id } = req.body;
 
-    const session = await startActivity(event_id, authUserId);
+    const session = await startActivity(event_id, authUserId, token);
 
     return res.status(201).json({
       message: "Actividad iniciada correctamente",
