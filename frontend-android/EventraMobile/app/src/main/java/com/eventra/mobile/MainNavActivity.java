@@ -37,7 +37,7 @@ public class MainNavActivity extends AppCompatActivity {
             }
 
             if (id == R.id.nav_activity) {
-                loadFragment(new ActivityFragment());
+                loadFragment(new ActivitySelectionFragment());
                 return true;
             }
 
