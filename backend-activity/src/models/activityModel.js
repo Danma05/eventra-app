@@ -110,10 +110,18 @@ const getActiveParticipantsByEvent = async (eventId) => {
         s.event_id,
         s.auth_user_id,
         s.started_at,
+        s.total_time_seconds,
+        s.total_distance_km,
+        s.average_speed_kmh,
         l.latitude,
         l.longitude,
+        l.altitude,
         l.speed_kmh,
-        l.recorded_at
+        l.accuracy_meters,
+        l.recorded_at,
+        RANK() OVER (
+          ORDER BY s.total_distance_km DESC, s.total_time_seconds ASC
+        ) AS current_position
      FROM activity_sessions s
      LEFT JOIN activity_locations l
         ON l.activity_session_id = s.id

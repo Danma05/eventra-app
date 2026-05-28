@@ -136,7 +136,25 @@ const listActiveParticipants = async (eventId) => {
     throw error;
   }
 
-  return await getActiveParticipantsByEvent(eventId);
+  const participants = await getActiveParticipantsByEvent(eventId);
+
+    return participants.map((participant) => ({
+    activity_session_id: participant.activity_session_id,
+    event_id: participant.event_id,
+    auth_user_id: participant.auth_user_id,
+    started_at: participant.started_at,
+    total_time_seconds: participant.total_time_seconds,
+    total_distance_km: participant.total_distance_km,
+    average_speed_kmh: participant.average_speed_kmh,
+    latitude: participant.latitude,
+    longitude: participant.longitude,
+    altitude: participant.altitude,
+    speed_kmh: participant.speed_kmh,
+    accuracy_meters: participant.accuracy_meters,
+    recorded_at: participant.recorded_at,
+    current_position: Number(participant.current_position),
+    is_tracking: participant.latitude !== null && participant.longitude !== null,
+  }));
 };
 
 module.exports = {
