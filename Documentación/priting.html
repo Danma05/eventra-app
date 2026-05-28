@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Runner's Printing Center 🏃‍♂️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            border-left: 5px solid #667eea;
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        button.danger {
+            background: #e74c3c;
+        }
+
+        button.success {
+            background: #27ae60;
+        }
+
+        .running-tips {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .tip-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .workout-plan {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            button, .button-group, .running-tips, .workout-plan, .stats-grid {
+                display: none;
+            }
+            textarea {
+                border: none;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🏃‍♂️ Runner's Printing Center 🖨️</h1>
+    <p>Sistema de impresión para planes de entrenamiento, diarios de running y motivación</p>
+
+    <!-- Estadísticas del runner -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+            <div class="stat-number" id="wordCount">0</div>
+            <div>Palabras escritas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="charCount">0</div>
+            <div>Caracteres</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="lineCount">0</div>
+            <div>Líneas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="kmEstimate">0</div>
+            <div>KM estimados 🏃</div>
+        </div>
+    </div>
+
+    <!-- Área de texto principal -->
+    <textarea id="textArea" placeholder="✍️ Escribe aquí tu plan de entrenamiento, diario de running, metas, o cualquier cosa relacionada con correr..."></textarea>
+
+    <!-- Botones de acción -->
+    <div class="button-group">
+        <button onclick="printText()">🖨️ Imprimir</button>
+        <button onclick="addRunningTemplate()">📋 Agregar plantilla runner</button>
+        <button onclick="addMotivationalQuote()">💪 Frase motivadora</button>
+        <button onclick="addWeeklyPlan()">📅 Plan semanal</button>
+        <button onclick="clearText()" class="danger">🗑️ Limpiar</button>
+        <button onclick="saveToLocal()" class="success">💾 Guardar</button>
+        <button onclick="loadFromLocal()" class="success">📂 Cargar</button>
+        <button onclick="analyzeRunningText()">🔍 Analizar texto runner</button>
+    </div>
+
+    <!-- Sección de tips running -->
+    <div class="running-tips">
+        <h3>🏅 Tips de running para hoy</h3>
+        <div id="tipsContainer"></div>
+    </div>
+
+    <!-- Plan de entrenamiento sugerido -->
+    <div class="workout-plan" id="workoutPlan">
+        <h3>📊 Tu plan de entrenamiento semanal</h3>
+        <p>Selecciona tu nivel:</p>
+        <button onclick="generatePlan('principiante')">👟 Principiante</button>
+        <button onclick="generatePlan('intermedio')">⚡ Intermedio</button>
+        <button onclick="generatePlan('avanzado')">🏆 Avanzado</button>
+        <div id="planContent"></div>
+    </div>
+</div>
+
+<script>
+    // Variables globales
+    let runningTips = [];
+    let currentPlan = "";
+
+    // Inicializar tips de running (50 tips diferentes)
+    const tipsList = [
+        "🏃‍♂️ Calienta siempre 10 minutos antes de correr",
+        "💧 Hidrátate cada 20 minutos durante el running",
+        "🦵 Estira después de cada sesión para evitar lesiones",
+        "👟 Cambia tus zapatillas cada 500-800 km",
+        "📈 Aumenta tu distancia solo 10% por semana",
+        "🎽 Usa ropa reflectante si corres de noche",
+        "⏱️ El mejor momento para correr es por la mañana",
+        "🍌 Come un plátano 30 min antes para energía",
+        "💪 Entrena fuerza 2 veces por semana",
+        "🎧 Música a 180 bpm mejora tu cadencia",
+        "🧘 El yoga complementa perfectamente el running",
+        "📱 Usa apps para medir tu progreso",
+        "🌡️ No corras con más de 30°C o menos de -5°C",
+        "👥 Unirte a un club de running te motivará más",
+        "🎯 Fija metas realistas: 5K, 10K, media maratón",
+        "🛌 Duerme 7-8 horas para una buena recuperación",
+        "🥗 Come proteína después de correr",
+        "🧴 Usa protector solar incluso en días nublados",
+        "📊 Lleva un diario de tus entrenamientos",
+        "🎉 Celebra cada logro, por pequeño que sea",
+        "🩹 Escucha a tu cuerpo: descansa si duele",
+        "🏔️ Correr cuesta arriba mejora tu potencia",
+        "🌊 Correr en la playa es más divertido y desafiante",
+        "🎽 La ropa técnica evita rozaduras",
+        "💨 Controla tu respiración: inhala 3 pasos, exhala 2",
+        "📅 Descansa al menos 1 día a la semana",
+        "🏆 Participa en carreras para motivarte",
+        "🧊 Hielo en las piernas después de correr largas distancias",
+        "🦶 Masaje con pelota para la fascia plantar",
+        "📱 Graba tu técnica para mejorar",
+        "👟 Prueba diferentes superficies: asfalto, tierra, hierba",
+        "🌅 Correr al amanecer es mágico",
+        "🌙 Correr al atardecer relaja el estrés",
+        "🏃‍♀️ El running mejora tu salud cardiovascular",
+        "🧠 Correr libera endorfinas (la hormona de la felicidad)",
+        "💪 Ayuda a perder peso si lo combinas con dieta",
+        "🦴 Fortalece tus huesos y articulaciones",
+        "😴 Mejora la calidad del sueño",
+        "🤝 Conocerás gente con tus mismos intereses",
+        "🗺️ Descubrirás nuevos lugares en tu ciudad",
+        "⏰ Un hábito: corre siempre a la misma hora",
+        "🏅 Medallas virtuales también motivan",
+        "📸 Comparte tus logros en redes",
+        "🧘 La respiración nasal mejora la eficiencia",
+        "⚡ El running interválico quema más grasa",
+        "📉 Controla tu frecuencia cardíaca",
+        "🧥 Vístete como si hiciera 10°C más",
+        "🧢 Gorra para el sol o la lluvia",
+        "🧤 Guantes finos para días fríos",
+        "🔦 Linterna frontal si corres de noche"
+    ];
+
+    // Cargar 20 tips iniciales
+    for(let i = 0; i < 20; i++) {
+        runningTips.push(tipsList[i % tipsList.length]);
+    }
+
+    // Mostrar tips en el contenedor
+    function displayTips() {
+        const container = document.getElementById('tipsContainer');
+        container.innerHTML = '';
+        runningTips.slice(0, 10).forEach(tip => {
+            const tipDiv = document.createElement('div');
+            tipDiv.className = 'tip-item';
+            tipDiv.textContent = tip;
+            container.appendChild(tipDiv);
+        });
+    }
+
+    // Actualizar estadísticas del texto
+    function updateStats() {
+        const text = document.getElementById('textArea').value;
+        const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+        const chars = text.length;
+        const lines = text === '' ? 0 : text.split('\n').length;
+        const kmEstimate = Math.floor(words / 50); // 50 palabras = 1 km motivacional
+        
+        document.getElementById('wordCount').textContent = words;
+        document.getElementById('charCount').textContent = chars;
+        document.getElementById('lineCount').textContent = lines;
+        document.getElementById('kmEstimate').textContent = kmEstimate;
+    }
+
+    // Función principal de impresión
+    function printText() {
+        let content = document.getElementById('textArea').value;
+        if(content.trim() === '') {
+            alert("🏃‍♂️ ¡Escribe algo sobre running antes de imprimir!");
+            return;
+        }
+        
+        let win = window.open('', '', 'height=700,width=800');
+        win.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Runner's Document - Entrenamiento</title>
+                <style>
+                    body { 
+                        font-family: 'Courier New', monospace; 
+                        padding: 40px; 
+                        background: white;
+                        line-height: 1.6;
+                    }
+                    .header {
+                        text-align: center;
+                        border-bottom: 2px solid #667eea;
+                        padding-bottom: 20px;
+                        margin-bottom: 30px;
+                    }
+                    .footer {
+                        margin-top: 50px;
+                        text-align: center;
+                        font-size: 12px;
+                        color: gray;
+                    }
+                    pre {
+                        white-space: pre-wrap;
+                        font-family: inherit;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>🏃‍♂️ Diario de Running</h1>
+                    <p>Fecha: ${new Date().toLocaleDateString()}</p>
+                </div>
+                <pre>${content}</pre>
+                <div class="footer">
+                    💪 ¡Sigue corriendo! Documento generado por Runner's Printing Center
+                </div>
+            </body>
+            </html>
+        `);
+        win.document.close();
+        win.print();
+    }
+
+    // Agregar plantilla runner
+    function addRunningTemplate() {
+        const template = `=== PLAN DE ENTRENAMIENTO SEMANAL ===
+
+LUNES: Trote suave 5km + estiramientos
+MARTES: Series 6x400m + ejercicios de fuerza
+MIÉRCOLES: Descanso activo (bici o natación)
+JUEVES: Ritmo constante 8km
+VIERNES: Cuestas 8x100m + técnica de carrera
+SÁBADO: Larga distancia 12-15km
+DOMINGO: Recuperación 3km + yoga
+
+📊 OBJETIVO DE LA SEMANA:
+- Mejorar mi tiempo en 5K
+- Mantener hidratación adecuada
+- Dormir mínimo 7h diarias
+
+🏅 FRASE MOTIVACIONAL:
+"El único mal entrenamiento es el que no se hace"`;
+        
+        const textarea = document.getElementById('textArea');
+        textarea.value += (textarea.value ? '\n\n' : '') + template;
+        updateStats();
+    }
+
+    // Agregar frase motivadora aleatoria
+    function addMotivationalQuote() {
+        const quotes = [
+            "💪 'Correr es el mayor meditador del silencio' - Emil Zátopek",
+            "🏆 'El dolor es temporal, el orgullo es para siempre'",
+            "🌟 'No hay nada imposible, la palabra misma dice 'soy posible''",
+            "🏃‍♂️ 'Corremos no porque nos haga daño, sino porque nos hace libres'",
+            "⚡ 'El momento más difícil es también el más transformador'",
+            "🎯 'Las metas no son sueños, son planes en acción'",
+            "🔥 'La única mala carrera es la que no empiezas'",
+            "🧠 'Tu mente se rendirá antes que tu cuerpo, escucha a tu cuerpo'",
+            "🌅 'Cada amanecer es una nueva oportunidad para correr'",
+            "🏅 'No compites contra otros, compites contra tus límites'"
+        ];
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        const textarea = document.getElementById('textArea');
+        textarea.value += (textarea.value ? '\n\n' : '') + randomQuote;
+        updateStats();
+    }
+
+    // Agregar plan semanal
+    function addWeeklyPlan() {
+        const plan = `📅 PLAN DE RUNNING PARA LA SEMANA DEL ${new Date().toLocaleDateString()}
+
+DÍA 1 (Lunes): Calentamiento 10min + 5km suaves + estiramientos 10min
+DÍA 2 (Martes): Calentamiento + Series 10x200m + enfriamiento
+DÍA 3 (Miércoles): Descanso o natación 30min
+DÍA 4 (Jueves): 8km a ritmo de carrera (5:30/km)
+DÍA 5 (Viernes): Ejercicios de fuerza + core 20min
+DÍA 6 (Sábado): Carrera larga 12-18km (según nivel)
+DÍA 7 (Domingo): Recuperación 3km muy suaves + yoga
+
+💧 HIDRATACIÓN: 2L de agua diarios mínimo
+🍌 ALIMENTACIÓN: Carbohidratos 2h antes de correr
+😴 SUEÑO: Respetar 8h para buena recuperación`;
+        
+        const textarea = document.getElementById('textArea');
+        textarea.value += (textarea.value ? '\n\n' : '') + plan;
+        updateStats();
+    }
+
+    // Limpiar texto
+    function clearText() {
+        if(confirm('¿Borrar todo el texto? Perderás los cambios no guardados')) {
+            document.getElementById('textArea').value = '';
+            updateStats();
+        }
+    }
+
+    // Guardar en localStorage
+    function saveToLocal() {
+        const content = document.getElementById('textArea').value;
+        localStorage.setItem('runningText', content);
+        alert('💾 Texto guardado exitosamente');
+    }
+
+    // Cargar desde localStorage
+    function loadFromLocal() {
+        const saved = localStorage.getItem('runningText');
+        if(saved) {
+            document.getElementById('textArea').value = saved;
+            updateStats();
+            alert('📂 Texto cargado correctamente');
+        } else {
+            alert('No hay nada guardado aún');
+        }
+    }
+
+    // Analizar texto runner
+    function analyzeRunningText() {
+        const text = document.getElementById('textArea').value;
+        const words = text.toLowerCase().split(/\s+/);
+        
+        const runningKeywords = ['km', 'kilómetro', 'maratón', '5k', '10k', 'media maratón', 'entreno', 'series', 'cuestas', 'ritmo', 'cadencia', 'zapatillas', 'amortiguación', 'hidratación', 'recuperación'];
+        
+        let foundKeywords = runningKeywords.filter(keyword => text.toLowerCase().includes(keyword));
+        
+        let analysis = `🔍 ANÁLISIS DE TU TEXTO RUNNER:\n\n`;
+        analysis += `📊 Palabras totales: ${words.length}\n`;
+        analysis += `🏃 Palabras clave de running encontradas: ${foundKeywords.length}\n`;
+        if(foundKeywords.length > 0) {
+            analysis += `📌 Keywords: ${foundKeywords.slice(0, 5).join(', ')}${foundKeywords.length > 5 ? '...' : ''}\n`;
+        }
+        analysis += `🎯 Nivel motivación: ${foundKeywords.length > 3 ? 'Alto 🔥' : foundKeywords.length > 1 ? 'Medio ⚡' : 'Bajo. ¡Agrega más términos runner! 💪'}\n`;
+        analysis += `\n💡 Recomendación: ${foundKeywords.length < 2 ? 'Intenta usar más vocabulario específico de running para enfocarte mejor.' : '¡Excelente! Sigue detallando tus entrenamientos.'}`;
+        
+        alert(analysis);
+    }
+
+    // Generar plan de entrenamiento según nivel
+    function generatePlan(level) {
+        let plan = '';
+        if(level === 'principiante') {
+            plan = `
+            🟢 PLAN PRINCIPIANTE (0-3 meses corriendo)
+            
+            Semana 1: Correr 2min + caminar 2min (repetir 8x) - 3 veces/semana
+            Semana 2: Correr 3min + caminar 2min (repetir 7x)
+            Semana 3: Correr 5min + caminar 2min (repetir 5x)
+            Semana 4: Correr 8min + caminar 2min (repetir 4x)
+            
+            🎯 Objetivo: Completar 5K en 8 semanas
+            `;
+        } else if(level === 'intermedio') {
+            plan = `
+            ⚡ PLAN INTERMEDIO (corres 3-6 meses)
+            
+            Lunes: 5km suaves (6:00/km)
+            Martes: Series 6x400m (descanso 90")
+            Miércoles: Descanso o natación
+            Jueves: 8km progresivos (6:00 a 5:30/km)
+            Viernes: Fuerza 30min
+            Sábado: 10-12km ritmo cómodo
+            Domingo: Recuperación 4km
+            
+            🎯 Objetivo: Bajar tu tiempo en 10K
+            `;
+        } else {
+            plan = `
+            🏆 PLAN AVANZADO (corres +6 meses)
+            
+            Lunes: 10km suaves + estiramientos
+            Martes: Series 12x400m o 8x800m
+            Miércoles: 15km ritmo medio
+            Jueves: Cuestas 10x100m + técnica
+            Viernes: Descanso activo o natación 1h
+            Sábado: 21km ritmo de maratón
+            Domingo: 8km recuperación + yoga
+            
+            🎯 Objetivo: Preparación para maratón o medio Ironman
+            `;
+        }
+        
+        document.getElementById('planContent').innerHTML = `<pre style="background:white; padding:15px; border-radius:8px; margin-top:10px;">${plan}</pre>`;
+    }
+
+    // Evento para actualizar estadísticas mientras se escribe
+    document.getElementById('textArea').addEventListener('input', updateStats);
+    
+    // Inicializar todo al cargar la página
+    window.onload = () => {
+        displayTips();
+        updateStats();
+        // Cargar texto de ejemplo
+        const exampleText = `🏃‍♂️ MI DIARIO DE RUNNING
+
+Hoy he corrido 5km en 28 minutos. Me he sentido muy bien, especialmente en el último kilómetro donde he podido aumentar el ritmo.
+
+Próximos objetivos:
+- Llegar a los 10km sin parar
+- Mejorar mi tiempo en 5K (bajar de 25min)
+- Correr mi primera carrera popular
+
+Notas técnicas:
+- Hoy he probado zapatillas nuevas (Nike Pegasus)
+- Hidratación correcta antes y después
+- Estiramientos de 10min al final`;
+        
+        document.getElementById('textArea').value = exampleText;
+        updateStats();
+    };
+</script>
+</body>
+</html>
