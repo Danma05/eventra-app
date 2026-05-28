@@ -1,0 +1,177 @@
+<!-- ========== SECCIÓN RUNNING 
+en este apartado
+se estara
+intentapd
+ceear
+como parte del esquema
+now
+1
+2
+3
+4
+5
+(moda deportiva) ========== -->
+<div style="margin-top: 50px; padding: 20px; background: #e0f7fa; border-radius: 15px;">
+    <h2>🏃‍♀️ Colección Running <span style="font-size: 0.8em;">🔥 Ropa y accesorios para correr con estilo</span></h2>
+    
+    <div class="grid" style="grid-template-columns: repeat(4,1fr);">
+        <!-- Producto 1: Zapatillas running -->
+        <div class="card">
+            <h3>🏅 Zoom Fly 5</h3>
+            <p>Zapatillas ligeras con amortiguación reactiva</p>
+            <p><strong>$150</strong></p>
+            <button onclick="addToCart('Zoom Fly 5', 150)">➕ Añadir al carrito</button>
+        </div>
+        
+        <!-- Producto 2: Camiseta técnica -->
+        <div class="card">
+            <h3>👕 Camiseta Dri-Fit</h3>
+            <p>Secado rápido, ideal para maratones</p>
+            <p><strong>$45</strong></p>
+            <button onclick="addToCart('Camiseta Dri-Fit', 45)">➕ Añadir al carrito</button>
+        </div>
+        
+        <!-- Producto 3: Short running -->
+        <div class="card">
+            <h3>🩳 Short con bolsillo</h3>
+            <p>Tela elástica + reflectante</p>
+            <p><strong>$55</strong></p>
+            <button onclick="addToCart('Short running', 55)">➕ Añadir al carrito</button>
+        </div>
+        
+        <!-- Producto 4: Reloj GPS -->
+        <div class="card">
+            <h3>⌚ Smartwatch Runner</h3>
+            <p>Mide ritmo, distancia y calorías</p>
+            <p><strong>$199</strong></p>
+            <button onclick="addToCart('Smartwatch Runner', 199)">➕ Añadir al carrito</button>
+        </div>
+    </div>
+
+    <!-- Carrito de compras running -->
+    <div style="margin-top: 30px; background: white; border-radius: 10px; padding: 15px;">
+        <h3>🛒 Tu carrito runner <span id="cart-count">(0 productos)</span></h3>
+        <div id="cart-items" style="min-height: 50px;"></div>
+        <div style="font-weight: bold; margin-top: 10px;">Total: $<span id="cart-total">0</span></div>
+        <button onclick="checkout()" style="background: #27ae60; margin-top: 10px;">🏁 Finalizar compra + Tip runner</button>
+        <button onclick="clearCart()" style="background: #e74c3c; margin-left: 10px;">🗑️ Vaciar carrito</button>
+    </div>
+
+    <!-- Frase motivadora runner del día -->
+    <div style="margin-top: 20px; font-style: italic; background: #fff3cd; padding: 10px; border-radius: 8px; text-align: center;" id="motivation">
+        🌟 "Correr no es un deporte, es un estilo de vida" - ¡Lleva el running a tu look!
+    </div>
+</div>
+
+<script>
+    // Array para guardar productos del carrito
+    let cart = [];
+
+    // Función para añadir productos al carrito
+    function addToCart(productName, price) {
+        cart.push({ name: productName, price: price });
+        updateCartDisplay();
+        showRunningTip(productName);
+    }
+
+    // Actualizar la interfaz del carrito
+    function updateCartDisplay() {
+        const cartItemsDiv = document.getElementById('cart-items');
+        const cartCountSpan = document.getElementById('cart-count');
+        const cartTotalSpan = document.getElementById('cart-total');
+        
+        if (cart.length === 0) {
+            cartItemsDiv.innerHTML = '<p style="color: gray;">🏃‍♂️ Tu carrito está vacío. ¡Añade equipo runner!</p>';
+            cartCountSpan.innerText = '(0 productos)';
+            cartTotalSpan.innerText = '0';
+            return;
+        }
+        
+        // Mostrar lista de productos
+        let itemsHTML = '<ul style="list-style-type: none; padding-left: 0;">';
+        let total = 0;
+        
+        cart.forEach((item, index) => {
+            itemsHTML += `<li style="margin: 5px 0;">✔️ ${item.name} - $${item.price} 
+                          <button onclick="removeFromCart(${index})" style="background:#e74c3c; padding:2px 8px; margin-left:10px; font-size:12px;">❌</button></li>`;
+            total += item.price;
+        });
+        
+        itemsHTML += '</ul>';
+        cartItemsDiv.innerHTML = itemsHTML;
+        cartCountSpan.innerText = `(${cart.length} productos)`;
+        cartTotalSpan.innerText = total;
+    }
+    
+    // Eliminar producto individual
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartDisplay();
+    }
+    
+    // Vaciar todo el carrito
+    function clearCart() {
+        cart = [];
+        updateCartDisplay();
+        document.getElementById('motivation').innerHTML = '🧹 Carrito limpiado. ¡Empieza de nuevo tu selección runner!';
+        setTimeout(() => {
+            document.getElementById('motivation').innerHTML = '🌟 "Correr no es un deporte, es un estilo de vida" - ¡Lleva el running a tu look!';
+        }, 3000);
+    }
+    
+    // Mensaje aleatorio de running al añadir producto
+    function showRunningTip(productName) {
+        const tips = [
+            `🏃‍♀️ ¡Buenísima elección! ${productName} te hará volar en tu próximo 10K.`,
+            `🔥 Combina ${productName} con un buen calentamiento y verás resultados.`,
+            `💪 Tip runner: No olvides hidratarte cada 5 km. ¡Tu ${productName} lo agradecerá!`,
+            `🎽 ¿Sabías que correr con ropa adecuada mejora un 15% tu rendimiento? ¡${productName} es ideal!`,
+            `🌟 ¡Ese producto es tendencia! Muchos runners lo usan para sus maratones.`,
+            `⏱️ Con ${productName}, podrás batir tu récord personal (o al menos lucir genial intentándolo).`
+        ];
+        let randomTip = tips[Math.floor(Math.random() * tips.length)];
+        document.getElementById('motivation').innerHTML = `✨ ${randomTip}`;
+        setTimeout(() => {
+            document.getElementById('motivation').innerHTML = '🌟 "Correr no es un deporte, es un estilo de vida" - ¡Lleva el running a tu look!';
+        }, 4000);
+    }
+    
+    // Finalizar compra con mensaje runner
+    function checkout() {
+        if (cart.length === 0) {
+            alert("🏃‍♂️ Tu carrito está vacío. ¡Añade algo para correr con estilo!");
+            return;
+        }
+        
+        let total = cart.reduce((sum, item) => sum + item.price, 0);
+        let mensaje = `🎉 ¡Compra runner completada! Total: $${total}. `;
+        
+        if (total > 300) {
+            mensaje += "🏅 Eres todo un corredor PRO. ¡Te has ganado un descuento para la próxima!";
+        } else if (total > 150) {
+            mensaje += "⚡ Gran selección. ¡Estás listo para tu media maratón!";
+        } else {
+            mensaje += "👟 Buen comienzo. ¡Sigue sumando kilómetros y productos!";
+        }
+        
+        alert(mensaje);
+        cart = [];
+        updateCartDisplay();
+    }
+</script>
+
+<!-- Estilo adicional para botones dentro del carrito -->
+<style>
+    button:hover {
+        opacity: 0.8;
+        transform: scale(1.02);
+        transition: 0.2s;
+    }
+    .card {
+        transition: 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+</style>
