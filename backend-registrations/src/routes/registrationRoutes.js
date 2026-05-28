@@ -5,6 +5,7 @@ const {
   postRegistrationCounts,
   getOrganizerRegistrationCounts,
   getEventParticipants,
+  getRegistrationCheck
 } = require("../controllers/registrationController");
 const verifyToken = require("../middlewares/verifyToken");
 
@@ -15,5 +16,6 @@ router.get("/my", verifyToken, getMyRegistrationList);
 router.post("/counts", verifyToken, postRegistrationCounts);
 router.get("/my/counts", verifyToken, getOrganizerRegistrationCounts);
 router.get("/event/:eventId/participants", verifyToken, getEventParticipants);
+router.get("/check", verifyToken, getRegistrationCheck);
 
 module.exports = router;

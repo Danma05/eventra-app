@@ -10,7 +10,7 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+# Package Files
 *.jar
 *.war
 *.nar
@@ -19,8 +19,60 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Java crash logs
 hs_err_pid*
 replay_pid*
+
+# =========================
+# ANDROID / ANDROID STUDIO
+# =========================
+
+.gradle/
+local.properties
+.idea/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+frontend-android/EventraMobile/.gradle/
+frontend-android/EventraMobile/app/build/
+
+# =========================
+# NODE.JS / MICROSERVICES
+# =========================
+
+node_modules/
+
+backend-auth/node_modules/
+backend-user/node_modules/
+backend-events/node_modules/
+backend-registrations/node_modules/
+backend-activity/node_modules/
+backend-results/node_modules/
+
+# =========================
+# ENV FILES
+# =========================
+
+.env
+
 backend-auth/.env
-frontend-android/EventraMobile/app/.gradle/
+backend-user/.env
+backend-events/.env
+backend-registrations/.env
+backend-activity/.env
+backend-results/.env
+
+# =========================
+# VS CODE
+# =========================
+
+.vscode/
+
+# =========================
+# MAC / WINDOWS
+# =========================
+
+.DS_Store
+Thumbs.db

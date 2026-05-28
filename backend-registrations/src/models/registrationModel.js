@@ -54,10 +54,24 @@ const getParticipantsByEventId = async (eventId) => {
   return result.rows;
 };
 
+const checkRegistrationByEventAndUser = async (eventId, authUserId) => {
+  const result = await pool.query(
+    `SELECT *
+     FROM event_registrations
+     WHERE event_id = $1
+       AND auth_user_id = $2
+       AND registration_status = 'REGISTERED'`,
+    [eventId, authUserId]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   findRegistrationByEventAndUser,
   createRegistration,
   getMyRegistrations,
   countRegistrationsByEvents,
   getParticipantsByEventId,
+  checkRegistrationByEventAndUser,
 };

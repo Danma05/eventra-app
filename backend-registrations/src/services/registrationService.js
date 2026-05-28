@@ -6,6 +6,7 @@ const {
   getMyRegistrations,
   countRegistrationsByEvents,
   getParticipantsByEventId,
+  checkRegistrationByEventAndUser,
 } = require("../models/registrationModel");
 
 const pool = require("../config/db");
@@ -151,10 +152,25 @@ const listParticipantsByEvent = async (eventId) => {
   return await getParticipantsByEventId(eventId);
 };
 
+const validateUserRegistration = async (eventId, authUserId) => {
+  if (!eventId || !authUserId) {
+    const error = new Error("event_id y auth_user_id son obligatorios");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const registration = await checkRegistrationByEventAndUser(eventId, authUserId);
+
+  return {
+    registered: !!registration,
+  };
+};
+
 module.exports = {
   registerToEvent,
   listMyRegistrations,
   getRegistrationCounts,
   getOrganizerCounts,
   listParticipantsByEvent,
+  validateUserRegistration,
 };
