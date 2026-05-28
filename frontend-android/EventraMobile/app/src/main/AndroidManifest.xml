@@ -11,6 +11,10 @@
         android:usesCleartextTraffic="true">
 
         <activity
+            android:name=".RunningActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".EditProfileActivity"
             android:exported="false" />
 

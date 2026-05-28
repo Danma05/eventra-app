@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,15 +54,10 @@ public class ActivitySelectionFragment extends Fragment {
             bundle.putLong("event_id", event.getEventId());
             bundle.putString("event_title", event.getTitle());
 
-            ActivityFragment activityFragment = new ActivityFragment();
-            activityFragment.setArguments(bundle);
-
-            requireActivity()
-                    .getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.frameContainer, activityFragment)
-                    .addToBackStack(null)
-                    .commit();
+            Intent intent = new Intent(requireContext(), RunningActivity.class);
+            intent.putExtra("event_id", event.getEventId());
+            intent.putExtra("event_title", event.getTitle());
+            startActivity(intent);
         });
 
         recyclerRegisteredEvents.setLayoutManager(new LinearLayoutManager(requireContext()));
