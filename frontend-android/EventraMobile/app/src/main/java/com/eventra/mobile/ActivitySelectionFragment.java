@@ -33,8 +33,7 @@ public class ActivitySelectionFragment extends Fragment {
 
     private SessionManager sessionManager;
 
-    private static final String MY_REGISTRATIONS_URL =
-            "http://172.20.10.11:3004/registrations/my";
+    private static final String MY_REGISTRATIONS_URL = ApiConfig.REGISTRATIONS_URL + "/registrations/my";
 
     @Nullable
     @Override

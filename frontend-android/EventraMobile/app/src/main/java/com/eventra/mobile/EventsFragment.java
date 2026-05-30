@@ -32,7 +32,7 @@ public class EventsFragment extends Fragment {
     private EventAdapter adapter;
     private final ArrayList<Event> eventList = new ArrayList<>();
 
-    private static final String EVENTS_URL = "http://172.20.10.11:3003/events";
+    private static final String EVENTS_URL = ApiConfig.EVENTS_URL + "/events";
 
     @Nullable
     @Override

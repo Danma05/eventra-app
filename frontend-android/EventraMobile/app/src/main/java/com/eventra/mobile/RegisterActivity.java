@@ -34,9 +34,9 @@ public class RegisterActivity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
     private SessionManager sessionManager;
 
-    private static final String REGISTER_URL = "http://172.20.10.11:3001/auth/register";
-    private static final String LOGIN_URL = "http://172.20.10.11:3001/auth/login";
-    private static final String CREATE_PROFILE_URL = "http://172.20.10.11:3002/users/profile";
+    private static final String REGISTER_URL = ApiConfig.AUTH_URL + "/auth/register";
+    private static final String LOGIN_URL = ApiConfig.AUTH_URL + "/auth/login";
+    private static final String CREATE_PROFILE_URL = ApiConfig.USER_URL + "/users/profile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

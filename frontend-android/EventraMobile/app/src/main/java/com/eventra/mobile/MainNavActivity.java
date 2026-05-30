@@ -21,11 +21,6 @@ public class MainNavActivity extends AppCompatActivity {
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.nav_home) {
-                loadFragment(new HomeFragment());
-                return true;
-            }
-
             if (id == R.id.nav_events) {
                 loadFragment(new EventsFragment());
                 return true;
@@ -54,7 +49,7 @@ public class MainNavActivity extends AppCompatActivity {
         if (openEvents) {
             bottomNavigation.setSelectedItemId(R.id.nav_events);
         } else {
-            bottomNavigation.setSelectedItemId(R.id.nav_home);
+            bottomNavigation.setSelectedItemId(R.id.nav_events);
         }
     }
 

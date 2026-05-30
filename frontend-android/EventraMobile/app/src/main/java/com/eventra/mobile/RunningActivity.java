@@ -86,17 +86,10 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
 
-    private static final String START_ACTIVITY_URL =
-            "http://172.20.10.11:3006/activities/start";
-
-    private static final String SEND_LOCATION_URL =
-            "http://172.20.10.11:3006/activities/location";
-
-    private static final String FINISH_ACTIVITY_URL =
-            "http://172.20.10.11:3006/activities/finish";
-
-    private static final String ACTIVE_PARTICIPANTS_URL =
-            "http://172.20.10.11:3006/activities/event/";
+    private static final String START_ACTIVITY_URL = ApiConfig.ACTIVITY_URL + "/activities/start";
+    private static final String SEND_LOCATION_URL = ApiConfig.ACTIVITY_URL + "/activities/location";
+    private static final String FINISH_ACTIVITY_URL = ApiConfig.ACTIVITY_URL + "/activities/finish";
+    private static final String ACTIVE_PARTICIPANTS_URL = ApiConfig.ACTIVITY_URL + "/activities/event/";
 
     private final ArrayList<ActiveParticipant> activeParticipants = new ArrayList<>();
 

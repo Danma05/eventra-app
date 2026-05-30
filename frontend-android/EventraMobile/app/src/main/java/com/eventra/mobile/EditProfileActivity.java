@@ -29,8 +29,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private String selectedBirthDate = "";
 
-    private static final String PROFILE_URL =
-            "http://172.20.10.11:3002/users/profile/me";
+    private static final String PROFILE_URL = ApiConfig.USER_URL + "/users/profile/me";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

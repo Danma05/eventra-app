@@ -32,7 +32,7 @@ public class ResultsFragment extends Fragment {
     private SessionManager sessionManager;
     private long selectedEventId = 0;
 
-    private static final String BASE_URL = "http://172.20.10.11:3005/results";
+    private static final String BASE_URL = ApiConfig.RESULTS_URL + "/results";
 
     @Nullable
     @Override
