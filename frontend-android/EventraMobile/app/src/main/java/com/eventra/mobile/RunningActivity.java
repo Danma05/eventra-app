@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,13 +21,23 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
+
+import org.json.JSONArray;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import android.util.Log;
 
 public class RunningActivity extends AppCompatActivity {
 
@@ -67,6 +78,13 @@ public class RunningActivity extends AppCompatActivity {
 
     private static final String FINISH_ACTIVITY_URL =
             "http://172.20.10.11:3006/activities/finish";
+
+    private static final String ACTIVE_PARTICIPANTS_URL =
+            "http://172.20.10.11:3006/activities/event/";
+
+    private final ArrayList<ActiveParticipant> activeParticipants = new ArrayList<>();
+
+    private Handler participantsHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +187,7 @@ public class RunningActivity extends AppCompatActivity {
 
                             startTimer();
                             startLocationUpdates();
+                            startActiveParticipantsUpdates();
 
                             Toast.makeText(this, "Carrera iniciada", Toast.LENGTH_LONG).show();
                         } else {
@@ -421,6 +440,7 @@ public class RunningActivity extends AppCompatActivity {
     private void finishActivitySession() {
         isRunning = false;
         timerHandler.removeCallbacks(timerRunnable);
+        participantsHandler.removeCallbacks(participantsRunnable);
 
         stopLocationUpdates();
 
@@ -494,12 +514,109 @@ public class RunningActivity extends AppCompatActivity {
         }
     }
 
+    private void loadActiveParticipants() {
+        String token = new SessionManager(this).getToken();
+
+        if (token == null || token.trim().isEmpty()) {
+            return;
+        }
+
+        if (eventId == 0) {
+            return;
+        }
+
+        new Thread(() -> {
+            HttpURLConnection conn = null;
+
+            try {
+                URL url = new URL(
+                        ACTIVE_PARTICIPANTS_URL
+                                + eventId
+                                + "/active"
+                );
+
+                conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = responseCode >= 200 && responseCode < 300
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                StringBuilder response = new StringBuilder();
+
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                reader.close();
+
+                if (responseCode == 200) {
+                    JSONArray array = new JSONArray(response.toString());
+
+                    activeParticipants.clear();
+
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = array.getJSONObject(i);
+
+                        boolean isTracking = obj.optBoolean("is_tracking", false);
+
+                        if (isTracking) {
+                            ActiveParticipant participant = new ActiveParticipant(
+                                    obj.optLong("activity_session_id"),
+                                    obj.optLong("auth_user_id"),
+                                    obj.optDouble("latitude"),
+                                    obj.optDouble("longitude"),
+                                    obj.optDouble("speed_kmh"),
+                                    obj.optInt("current_position")
+                            );
+
+                            activeParticipants.add(participant);
+                        }
+                    }
+
+                    Log.d("ACTIVE_PARTICIPANTS", "Total activos: " + activeParticipants.size());
+                }
+
+            } catch (Exception e) {
+                Log.e("ACTIVE_PARTICIPANTS", "Error cargando participantes: " + e.getMessage());
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+        }).start();
+    }
+
+    private void startActiveParticipantsUpdates() {
+        participantsHandler.postDelayed(participantsRunnable, 3000);
+    }
+
+    private final Runnable participantsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isRunning) {
+                loadActiveParticipants();
+                participantsHandler.postDelayed(this, 3000);
+            }
+        }
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         isRunning = false;
         timerHandler.removeCallbacks(timerRunnable);
+        participantsHandler.removeCallbacks(participantsRunnable);
         stopLocationUpdates();
     }
 }
