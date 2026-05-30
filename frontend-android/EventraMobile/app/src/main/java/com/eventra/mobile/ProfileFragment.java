@@ -26,14 +26,9 @@ public class ProfileFragment extends Fragment {
 
     private SessionManager sessionManager;
 
-    private static final String PROFILE_URL =
-            "http://172.20.10.11:3002/users/profile/me";
-
-    private static final String MY_REGISTRATIONS_URL =
-            "http://172.20.10.11:3004/registrations/my";
-
-    private static final String ORGANIZER_EVENTS_URL =
-            "http://172.20.10.11:3003/events/organizer/my";
+    private static final String PROFILE_URL = ApiConfig.USER_URL + "/users/profile/me";
+    private static final String MY_REGISTRATIONS_URL = ApiConfig.REGISTRATIONS_URL + "/registrations/my";
+    private static final String ORGANIZER_EVENTS_URL = ApiConfig.EVENTS_URL + "/events/organizer/my";
 
     @Nullable
     @Override

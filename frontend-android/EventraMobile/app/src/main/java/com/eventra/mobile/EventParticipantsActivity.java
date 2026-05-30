@@ -24,8 +24,7 @@ public class EventParticipantsActivity extends AppCompatActivity {
     private long eventId;
     private String eventTitle;
 
-    private static final String BASE_URL =
-            "http://172.20.10.11:3004/registrations/event/";
+    private static final String BASE_URL = ApiConfig.REGISTRATIONS_URL + "/registrations/event/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
