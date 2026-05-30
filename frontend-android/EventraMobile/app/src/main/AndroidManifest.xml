@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -9,6 +11,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Eventra"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBg3MyNDv0nU_nb188eI-JHVWF2VLna_gY" />
+
+        <activity
+            android:name=".RunningActivity"
+            android:exported="false" />
 
         <activity
             android:name=".EditProfileActivity"

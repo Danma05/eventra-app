@@ -105,29 +105,46 @@ const finishActivitySession = async ({
 
 const getActiveParticipantsByEvent = async (eventId) => {
   const result = await pool.query(
-    `SELECT DISTINCT ON (s.auth_user_id)
-        s.id AS activity_session_id,
-        s.event_id,
-        s.auth_user_id,
-        s.started_at,
-        s.total_time_seconds,
-        s.total_distance_km,
-        s.average_speed_kmh,
-        l.latitude,
-        l.longitude,
-        l.altitude,
-        l.speed_kmh,
-        l.accuracy_meters,
-        l.recorded_at,
-        RANK() OVER (
-          ORDER BY s.total_distance_km DESC, s.total_time_seconds ASC
+    `SELECT
+        active.activity_session_id,
+        active.event_id,
+        active.auth_user_id,
+        active.started_at,
+        active.total_time_seconds,
+        active.total_distance_km,
+        active.average_speed_kmh,
+        active.latitude,
+        active.longitude,
+        active.altitude,
+        active.speed_kmh,
+        active.accuracy_meters,
+        active.recorded_at,
+        ROW_NUMBER() OVER (
+          ORDER BY active.total_distance_km DESC, active.total_time_seconds ASC
         ) AS current_position
-     FROM activity_sessions s
-     LEFT JOIN activity_locations l
-        ON l.activity_session_id = s.id
-     WHERE s.event_id = $1
-       AND s.activity_status = 'ACTIVE'
-     ORDER BY s.auth_user_id, l.recorded_at DESC`,
+     FROM (
+        SELECT DISTINCT ON (s.auth_user_id)
+            s.id AS activity_session_id,
+            s.event_id,
+            s.auth_user_id,
+            s.started_at,
+            COALESCE(s.total_time_seconds, 0) AS total_time_seconds,
+            COALESCE(s.total_distance_km, 0) AS total_distance_km,
+            COALESCE(s.average_speed_kmh, 0) AS average_speed_kmh,
+            l.latitude,
+            l.longitude,
+            l.altitude,
+            COALESCE(l.speed_kmh, 0) AS speed_kmh,
+            l.accuracy_meters,
+            l.recorded_at
+        FROM activity_sessions s
+        LEFT JOIN activity_locations l
+          ON l.activity_session_id = s.id
+        WHERE s.event_id = $1
+          AND s.activity_status = 'ACTIVE'
+        ORDER BY s.auth_user_id, l.recorded_at DESC
+     ) active
+     ORDER BY current_position ASC`,
     [eventId]
   );
 
