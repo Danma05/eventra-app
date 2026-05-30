@@ -40,8 +40,19 @@ import java.util.ArrayList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class RunningActivity extends AppCompatActivity {
+import java.util.HashMap;
+
+
+public class RunningActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private TextView tvActivityTitle, tvDistance, tvTime, tvPace, tvCalories, tvSpeed;
     private Button btnStartActivity;
@@ -92,6 +103,13 @@ public class RunningActivity extends AppCompatActivity {
     private TextView tvNoActiveParticipants;
     private ActiveParticipantAdapter activeParticipantAdapter;
 
+    private GoogleMap googleMap;
+    private Marker myLocationMarker;
+
+    private final HashMap<Long, Marker> participantMarkers = new HashMap<>();
+
+    private boolean cameraMovedToUser = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +122,14 @@ public class RunningActivity extends AppCompatActivity {
         setupInitialData();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.mapFragment);
+
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
         btnStartActivity.setOnClickListener(v -> {
             if (!isRunning) {
@@ -273,7 +299,7 @@ public class RunningActivity extends AppCompatActivity {
         LocationRequest locationRequest =
                 new LocationRequest.Builder(
                         Priority.PRIORITY_HIGH_ACCURACY,
-                        3000
+                        2000
                 ).build();
 
         locationCallback = new LocationCallback() {
@@ -332,6 +358,7 @@ public class RunningActivity extends AppCompatActivity {
         }
 
         lastLocation = location;
+        updateMyMarkerOnMap(location);
         updateMetricsUI();
 
         if (activitySessionId > 0) {
@@ -609,6 +636,8 @@ public class RunningActivity extends AppCompatActivity {
                                 empty ? View.GONE : View.VISIBLE
                         );
 
+                        updateParticipantMarkersOnMap();
+
                     });
 
                     Log.d("ACTIVE_PARTICIPANTS", "Total activos: " + activeParticipants.size());
@@ -671,6 +700,81 @@ public class RunningActivity extends AppCompatActivity {
                 btnStartActivity.setText("▷  Iniciar Carrera");
                 timerHandler.removeCallbacks(timerRunnable);
                 participantsHandler.removeCallbacks(participantsRunnable);
+            }
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+
+        googleMap.getUiSettings().setZoomControlsEnabled(false);
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED) {
+            googleMap.setMyLocationEnabled(true);
+        }
+    }
+
+    private void updateMyMarkerOnMap(Location location) {
+        if (googleMap == null || location == null) return;
+
+        LatLng myPosition = new LatLng(
+                location.getLatitude(),
+                location.getLongitude()
+        );
+
+        if (myLocationMarker == null) {
+            myLocationMarker = googleMap.addMarker(
+                    new MarkerOptions()
+                            .position(myPosition)
+                            .title("Mi ubicación")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+            );
+        } else {
+            myLocationMarker.setPosition(myPosition);
+        }
+
+        if (!cameraMovedToUser) {
+            googleMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(myPosition, 17f)
+            );
+            cameraMovedToUser = true;
+        }
+    }
+
+    private void updateParticipantMarkersOnMap() {
+        if (googleMap == null) return;
+
+        for (ActiveParticipant participant : activeParticipants) {
+            LatLng position = new LatLng(
+                    participant.getLatitude(),
+                    participant.getLongitude()
+            );
+
+            Marker existingMarker = participantMarkers.get(participant.getAuthUserId());
+
+            if (existingMarker == null) {
+                Marker marker = googleMap.addMarker(
+                        new MarkerOptions()
+                                .position(position)
+                                .title("Corredor #" + participant.getAuthUserId())
+                                .snippet("Posición #" + participant.getCurrentPosition()
+                                        + " • " + String.format("%.1f km/h", participant.getSpeedKmh()))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                );
+
+                participantMarkers.put(participant.getAuthUserId(), marker);
+            } else {
+                existingMarker.setPosition(position);
+                existingMarker.setSnippet(
+                        "Posición #" + participant.getCurrentPosition()
+                                + " • " + String.format("%.1f km/h", participant.getSpeedKmh())
+                );
             }
         }
     }

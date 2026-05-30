@@ -27,28 +27,12 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <LinearLayout
+        <fragment
+            android:id="@+id/mapFragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="230dp"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/bg_activity_map"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📍"
-                android:textSize="48sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Vista del mapa GPS"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
-        </LinearLayout>
+            android:layout_marginTop="18dp" />
 
         <TextView
             android:id="@+id/tvActiveParticipantsTitle"
