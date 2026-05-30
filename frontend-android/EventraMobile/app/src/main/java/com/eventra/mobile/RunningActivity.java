@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -50,6 +51,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
+
+import com.google.android.gms.tasks.CancellationTokenSource;
 
 
 public class RunningActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -667,6 +670,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         }
     };
 
+    @RequiresPermission(allOf = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     @Override
     public void onRequestPermissionsResult(
             int requestCode,
@@ -684,6 +688,11 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                         "Permiso de ubicación concedido",
                         Toast.LENGTH_SHORT
                 ).show();
+
+                if (googleMap != null) {
+                    googleMap.setMyLocationEnabled(false);
+                    showCurrentLocationBeforeStart();
+                }
 
                 if (isRunning) {
                     startLocationUpdates();
@@ -716,8 +725,44 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED) {
-            googleMap.setMyLocationEnabled(true);
+
+            googleMap.setMyLocationEnabled(false);
+            showCurrentLocationBeforeStart();
+
+        } else {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1001
+            );
         }
+    }
+
+    private void showCurrentLocationBeforeStart() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+        fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                cancellationTokenSource.getToken()
+        ).addOnSuccessListener(location -> {
+            if (location != null) {
+                updateMyMarkerOnMap(location);
+            } else {
+                fusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(lastLocation -> {
+                            if (lastLocation != null) {
+                                updateMyMarkerOnMap(lastLocation);
+                            }
+                        });
+            }
+        });
     }
 
     private void updateMyMarkerOnMap(Location location) {
@@ -733,7 +778,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                     new MarkerOptions()
                             .position(myPosition)
                             .title("Mi ubicación")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             );
         } else {
             myLocationMarker.setPosition(myPosition);
@@ -765,7 +810,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                                 .title("Corredor #" + participant.getAuthUserId())
                                 .snippet("Posición #" + participant.getCurrentPosition()
                                         + " • " + String.format("%.1f km/h", participant.getSpeedKmh()))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 );
 
                 participantMarkers.put(participant.getAuthUserId(), marker);
