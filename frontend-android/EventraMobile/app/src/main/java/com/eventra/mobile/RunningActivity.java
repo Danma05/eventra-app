@@ -1,5 +1,7 @@
 package com.eventra.mobile;
 
+import static android.os.Looper.getMainLooper;
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -7,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,12 +35,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
-import org.json.JSONArray;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import android.util.Log;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 public class RunningActivity extends AppCompatActivity {
 
@@ -86,6 +88,10 @@ public class RunningActivity extends AppCompatActivity {
 
     private Handler participantsHandler = new Handler(Looper.getMainLooper());
 
+    private RecyclerView recyclerActiveParticipants;
+    private TextView tvNoActiveParticipants;
+    private ActiveParticipantAdapter activeParticipantAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +122,12 @@ public class RunningActivity extends AppCompatActivity {
         tvCalories = findViewById(R.id.tvCalories);
         tvSpeed = findViewById(R.id.tvSpeed);
         btnStartActivity = findViewById(R.id.btnStartActivity);
+        recyclerActiveParticipants = findViewById(R.id.recyclerActiveParticipants);
+        tvNoActiveParticipants = findViewById(R.id.tvNoActiveParticipants);
+
+        activeParticipantAdapter = new ActiveParticipantAdapter(activeParticipants);
+        recyclerActiveParticipants.setLayoutManager(new LinearLayoutManager(this));
+        recyclerActiveParticipants.setAdapter(activeParticipantAdapter);
     }
 
     private void setupInitialData() {
@@ -583,6 +595,22 @@ public class RunningActivity extends AppCompatActivity {
                         }
                     }
 
+                    runOnUiThread(() -> {
+
+                        activeParticipantAdapter.notifyDataSetChanged();
+
+                        boolean empty = activeParticipants.isEmpty();
+
+                        tvNoActiveParticipants.setVisibility(
+                                empty ? View.VISIBLE : View.GONE
+                        );
+
+                        recyclerActiveParticipants.setVisibility(
+                                empty ? View.GONE : View.VISIBLE
+                        );
+
+                    });
+
                     Log.d("ACTIVE_PARTICIPANTS", "Total activos: " + activeParticipants.size());
                 }
 
@@ -609,6 +637,43 @@ public class RunningActivity extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            String[] permissions,
+            int[] grantResults
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1001) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                Toast.makeText(
+                        this,
+                        "Permiso de ubicación concedido",
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                if (isRunning) {
+                    startLocationUpdates();
+                }
+
+            } else {
+                Toast.makeText(
+                        this,
+                        "Permiso de ubicación requerido para iniciar la carrera",
+                        Toast.LENGTH_LONG
+                ).show();
+
+                isRunning = false;
+                btnStartActivity.setText("▷  Iniciar Carrera");
+                timerHandler.removeCallbacks(timerRunnable);
+                participantsHandler.removeCallbacks(participantsRunnable);
+            }
+        }
+    }
 
     @Override
     protected void onDestroy() {
