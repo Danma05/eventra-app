@@ -8,27 +8,19 @@ const validateCreateEvent = (req, res, next) => {
   }
 
   if (typeof title !== "string" || title.trim().length < 3) {
-    return res.status(400).json({
-      message: "title debe tener al menos 3 caracteres",
-    });
+    return res.status(400).json({ message: "title debe tener al menos 3 caracteres" });
   }
 
   if (typeof location !== "string" || location.trim().length < 3) {
-    return res.status(400).json({
-      message: "location debe tener al menos 3 caracteres",
-    });
+    return res.status(400).json({ message: "location debe tener al menos 3 caracteres" });
   }
 
   if (isNaN(Number(capacity)) || Number(capacity) <= 0) {
-    return res.status(400).json({
-      message: "capacity debe ser un número mayor a 0",
-    });
+    return res.status(400).json({ message: "capacity debe ser un número mayor a 0" });
   }
 
   if (typeof image_url !== "string" || image_url.trim().length === 0) {
-    return res.status(400).json({
-      message: "image_url es obligatoria",
-    });
+    return res.status(400).json({ message: "image_url es obligatoria" });
   }
 
   next();
@@ -37,42 +29,23 @@ const validateCreateEvent = (req, res, next) => {
 const validateUpdateEvent = (req, res, next) => {
   const { capacity, status, title, location } = req.body;
 
-  if (title !== undefined) {
-    if (typeof title !== "string" || title.trim().length < 3) {
-      return res.status(400).json({
-        message: "title debe tener al menos 3 caracteres",
-      });
-    }
+  if (title !== undefined && (typeof title !== "string" || title.trim().length < 3)) {
+    return res.status(400).json({ message: "title debe tener al menos 3 caracteres" });
   }
 
-  if (location !== undefined) {
-    if (typeof location !== "string" || location.trim().length < 3) {
-      return res.status(400).json({
-        message: "location debe tener al menos 3 caracteres",
-      });
-    }
+  if (location !== undefined && (typeof location !== "string" || location.trim().length < 3)) {
+    return res.status(400).json({ message: "location debe tener al menos 3 caracteres" });
   }
 
-  if (capacity !== undefined) {
-    if (isNaN(Number(capacity)) || Number(capacity) <= 0) {
-      return res.status(400).json({
-        message: "capacity debe ser un número mayor a 0",
-      });
-    }
+  if (capacity !== undefined && (isNaN(Number(capacity)) || Number(capacity) <= 0)) {
+    return res.status(400).json({ message: "capacity debe ser un número mayor a 0" });
   }
 
-  if (status !== undefined) {
-    if (!["ACTIVE", "CANCELLED", "FINISHED"].includes(status)) {
-      return res.status(400).json({
-        message: "status inválido",
-      });
-    }
+  if (status !== undefined && !["ACTIVE", "CANCELLED", "FINISHED"].includes(status)) {
+    return res.status(400).json({ message: "status inválido" });
   }
 
   next();
 };
 
-module.exports = {
-  validateCreateEvent,
-  validateUpdateEvent,
-};
+module.exports = { validateCreateEvent, validateUpdateEvent };

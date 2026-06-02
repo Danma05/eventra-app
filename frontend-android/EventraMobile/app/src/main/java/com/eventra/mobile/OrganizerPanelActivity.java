@@ -138,6 +138,14 @@ public class OrganizerPanelActivity extends AppCompatActivity {
                     public void onPublishResults(Event event) {
                         confirmFinishEvent(event);
                     }
+
+                    @Override
+                    public void onRaceControl(Event event) {
+                        Intent intent = new Intent(OrganizerPanelActivity.this, RaceControlActivity.class);
+                        intent.putExtra("event_id", event.getId());
+                        intent.putExtra("event_title", event.getTitle());
+                        startActivity(intent);
+                    }
                 }
         );
 

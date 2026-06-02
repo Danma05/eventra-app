@@ -17,6 +17,10 @@
             android:value="AIzaSyBg3MyNDv0nU_nb188eI-JHVWF2VLna_gY" />
 
         <activity
+            android:name=".RaceControlActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".RunningActivity"
             android:exported="false" />
 

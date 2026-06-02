@@ -58,6 +58,7 @@ import com.google.android.gms.tasks.CancellationTokenSource;
 public class RunningActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private TextView tvActivityTitle, tvDistance, tvTime, tvPace, tvCalories, tvSpeed;
+    private boolean alreadyAutoFinished = false;
     private Button btnStartActivity;
 
     private long eventId;
@@ -251,6 +252,7 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
         startTimeMillis = System.currentTimeMillis();
         elapsedSeconds = 0;
         totalDistanceMeters = 0.0;
+        alreadyAutoFinished = false;
         lastLocation = null;
 
         tvDistance.setText("0.00");
@@ -458,18 +460,54 @@ public class RunningActivity extends AppCompatActivity implements OnMapReadyCall
                 body.put("altitude", location.hasAltitude() ? location.getAltitude() : 0);
                 body.put("speed_kmh", location.hasSpeed() ? location.getSpeed() * 3.6 : 0);
                 body.put("accuracy_meters", location.hasAccuracy() ? location.getAccuracy() : 0);
+                body.put("total_time_seconds", elapsedSeconds);
+                body.put("total_distance_km", totalDistanceMeters / 1000.0);
+                body.put("average_speed_kmh", elapsedSeconds > 0 ? (totalDistanceMeters / 1000.0) / (elapsedSeconds / 3600.0) : 0);
 
                 OutputStream os = conn.getOutputStream();
                 os.write(body.toString().getBytes("UTF-8"));
                 os.close();
 
-                conn.getResponseCode();
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = responseCode >= 200 && responseCode < 300
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                Scanner scanner = new Scanner(is).useDelimiter("\\A");
+                String response = scanner.hasNext() ? scanner.next() : "";
+                scanner.close();
+
+                if (responseCode >= 200 && responseCode < 300) {
+                    JSONObject json = new JSONObject(response);
+                    boolean autoFinished = json.optBoolean("auto_finished", false);
+                    double distanceToFinish = json.optDouble("distance_to_finish_meters", -1);
+
+                    if (distanceToFinish >= 0) {
+                        Log.d("RACE_TRACKING", "Faltan a meta: " + distanceToFinish + " m");
+                    }
+
+                    if (autoFinished && !alreadyAutoFinished) {
+                        alreadyAutoFinished = true;
+                        runOnUiThread(() -> handleAutoFinishFromBackend());
+                    }
+                }
 
             } catch (Exception ignored) {
             } finally {
                 if (conn != null) conn.disconnect();
             }
         }).start();
+    }
+
+    private void handleAutoFinishFromBackend() {
+        isRunning = false;
+        timerHandler.removeCallbacks(timerRunnable);
+        participantsHandler.removeCallbacks(participantsRunnable);
+        stopLocationUpdates();
+        btnStartActivity.setText("✓ Carrera finalizada");
+        btnStartActivity.setEnabled(false);
+        Toast.makeText(this, "Llegaste a la meta. Carrera finalizada automáticamente", Toast.LENGTH_LONG).show();
     }
 
     private void finishActivitySession() {
