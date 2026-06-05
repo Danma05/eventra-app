@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isPasswordVisible = false;
     private SessionManager sessionManager;
 
-    private static final String LOGIN_URL = "http://172.20.10.11:3001/auth/login";
+    private static final String LOGIN_URL = ApiConfig.AUTH_URL + "/auth/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

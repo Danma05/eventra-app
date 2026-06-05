@@ -22,6 +22,7 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         void onDelete(Event event);
         void onViewParticipants(Event event);
         void onPublishResults(Event event);
+        void onRaceControl(Event event);
     }
 
     private final List<Event> events;
@@ -70,7 +71,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(event));
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(event));
         holder.btnViewParticipants.setOnClickListener(v -> listener.onViewParticipants(event));
-        holder.btnPublishResults.setOnClickListener(v -> listener.onPublishResults(event));
+        holder.btnPublishResults.setText("Control Carrera");
+        holder.btnPublishResults.setOnClickListener(v -> listener.onRaceControl(event));
     }
 
     @Override

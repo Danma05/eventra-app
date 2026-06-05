@@ -36,7 +36,7 @@ public class CreateEventActivity extends AppCompatActivity {
     private String selectedDate = "";
     private String selectedTime = "";
 
-    private static final String EVENTS_BASE_URL = "http://172.20.10.11:3003/events";
+    private static final String EVENTS_BASE_URL = ApiConfig.EVENTS_URL + "/events";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

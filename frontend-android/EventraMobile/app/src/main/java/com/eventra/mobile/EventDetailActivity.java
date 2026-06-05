@@ -27,7 +27,7 @@ public class EventDetailActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private long eventId;
 
-    private static final String REGISTER_EVENT_URL = "http://172.20.10.11:3004/registrations";
+    private static final String REGISTER_EVENT_URL = ApiConfig.REGISTRATIONS_URL + "/registrations";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

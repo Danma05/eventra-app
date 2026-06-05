@@ -49,17 +49,10 @@ public class OrganizerPanelActivity extends AppCompatActivity {
 
     private final HashMap<Long, Integer> registrationCountsByEventId = new HashMap<>();
 
-    private static final String REGISTRATION_COUNTS_URL =
-            "http://172.20.10.11:3004/registrations/counts";
-
-    private static final String ORGANIZER_EVENTS_URL =
-            "http://172.20.10.11:3003/events/organizer/my";
-
-    private static final String ORGANIZER_COUNTS_URL =
-            "http://172.20.10.11:3004/registrations/my/counts";
-
-    private static final String EVENTS_BASE_URL =
-            "http://172.20.10.11:3003/events";
+    private static final String REGISTRATION_COUNTS_URL = ApiConfig.REGISTRATIONS_URL + "/registrations/counts";
+    private static final String ORGANIZER_EVENTS_URL = ApiConfig.EVENTS_URL + "/events/organizer/my";
+    private static final String ORGANIZER_COUNTS_URL = ApiConfig.REGISTRATIONS_URL + "/registrations/my/counts";
+    private static final String EVENTS_BASE_URL = ApiConfig.EVENTS_URL + "/events";
 
 
     @Override
@@ -144,6 +137,14 @@ public class OrganizerPanelActivity extends AppCompatActivity {
                     @Override
                     public void onPublishResults(Event event) {
                         confirmFinishEvent(event);
+                    }
+
+                    @Override
+                    public void onRaceControl(Event event) {
+                        Intent intent = new Intent(OrganizerPanelActivity.this, RaceControlActivity.class);
+                        intent.putExtra("event_id", event.getId());
+                        intent.putExtra("event_title", event.getTitle());
+                        startActivity(intent);
                     }
                 }
         );

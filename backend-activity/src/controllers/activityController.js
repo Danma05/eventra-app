@@ -2,79 +2,69 @@ const {
   startActivity,
   registerLocation,
   finishActivity,
-  listActiveParticipants,
+  pauseActivity,
+  resumeActivity,
+  finishOpenSessionsByEvent,
+  listLiveRanking,
 } = require("../services/activityService");
+
+const handleError = (res, error) => res.status(error.statusCode || 500).json({ message: error.message });
 
 const postStartActivity = async (req, res) => {
   try {
-    const authUserId = req.user.id;
-    const token = req.headers.authorization;
-    const { event_id } = req.body;
-
-    const session = await startActivity(event_id, authUserId, token);
-
-    return res.status(201).json({
-      message: "Actividad iniciada correctamente",
-      session,
-    });
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({
-      message: error.message,
-    });
-  }
+    const session = await startActivity(req.body.event_id, req.user.id, req.headers.authorization);
+    return res.status(201).json({ message: "Actividad iniciada correctamente", session });
+  } catch (error) { return handleError(res, error); }
 };
 
 const postActivityLocation = async (req, res) => {
   try {
-    const authUserId = req.user.id;
-
-    const location = await registerLocation(req.body, authUserId);
-
-    return res.status(201).json({
-      message: "Ubicación registrada correctamente",
-      location,
-    });
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({
-      message: error.message,
-    });
-  }
+    const result = await registerLocation(req.body, req.user.id);
+    return res.status(201).json({ message: result.auto_finished ? "Llegaste a la meta. Actividad finalizada automáticamente" : "Ubicación registrada correctamente", ...result });
+  } catch (error) { return handleError(res, error); }
 };
 
 const postFinishActivity = async (req, res) => {
   try {
-    const authUserId = req.user.id;
-
-    const session = await finishActivity(req.body, authUserId);
-
-    return res.status(200).json({
-      message: "Actividad finalizada correctamente",
-      session,
-    });
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({
-      message: error.message,
-    });
-  }
+    const session = await finishActivity(req.body, req.user.id);
+    return res.status(200).json({ message: "Actividad finalizada correctamente", session });
+  } catch (error) { return handleError(res, error); }
 };
 
-const getActiveParticipants = async (req, res) => {
+const postPauseActivity = async (req, res) => {
   try {
-    const { eventId } = req.params;
+    const session = await pauseActivity(req.body.activity_session_id, req.user.id);
+    return res.status(200).json({ message: "Actividad pausada correctamente", session });
+  } catch (error) { return handleError(res, error); }
+};
 
-    const participants = await listActiveParticipants(eventId);
+const postResumeActivity = async (req, res) => {
+  try {
+    const session = await resumeActivity(req.body.activity_session_id, req.user.id);
+    return res.status(200).json({ message: "Actividad reanudada correctamente", session });
+  } catch (error) { return handleError(res, error); }
+};
 
-    return res.status(200).json(participants);
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({
-      message: error.message,
-    });
-  }
+const postFinishEventSessions = async (req, res) => {
+  try {
+    const sessions = await finishOpenSessionsByEvent(req.params.eventId);
+    return res.status(200).json({ message: "Sesiones abiertas marcadas como DNF", sessions });
+  } catch (error) { return handleError(res, error); }
+};
+
+const getLiveRanking = async (req, res) => {
+  try {
+    return res.status(200).json(await listLiveRanking(req.params.eventId));
+  } catch (error) { return handleError(res, error); }
 };
 
 module.exports = {
   postStartActivity,
   postActivityLocation,
   postFinishActivity,
-  getActiveParticipants,
+  postPauseActivity,
+  postResumeActivity,
+  postFinishEventSessions,
+  getActiveParticipants: getLiveRanking,
+  getLiveRanking,
 };

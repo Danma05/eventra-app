@@ -4,6 +4,7 @@
   "description": "Microservicio de inscripciones para Eventra",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
