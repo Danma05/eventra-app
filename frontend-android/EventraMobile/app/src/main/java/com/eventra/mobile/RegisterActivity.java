@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
+import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -143,6 +144,11 @@ public class RegisterActivity extends AppCompatActivity {
         if (password.length() < 8) {
             etPassword.setError("La contraseña debe tener al menos 8 caracteres");
             etPassword.requestFocus();
+            return;
+        }
+
+        if (!NetworkUtils.isConnected(this)) {
+            Toast.makeText(this, "No hay conexión a Internet", Toast.LENGTH_LONG).show();
             return;
         }
 

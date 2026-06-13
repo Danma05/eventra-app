@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
+import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -99,6 +100,11 @@ public class LoginActivity extends AppCompatActivity {
         if (password.isEmpty()) {
             etPassword.setError("La contraseña es obligatoria");
             etPassword.requestFocus();
+            return;
+        }
+
+        if (!NetworkUtils.isConnected(this)) {
+            Toast.makeText(this, "No hay conexión a Internet", Toast.LENGTH_LONG).show();
             return;
         }
 
