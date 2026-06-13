@@ -3,6 +3,7 @@ package com.eventra.mobile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,9 +22,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
-import android.widget.Toast;
+
 
 public class RegisterActivity extends AppCompatActivity {
+
+    private static final String TAG = "RegisterActivity";
 
     private ImageButton btnBack, btnTogglePassword;
     private EditText etName, etEmail, etPassword;
@@ -220,6 +223,8 @@ public class RegisterActivity extends AppCompatActivity {
                 });
 
             } catch (Exception e) {
+                Log.e(TAG, "Error de conexión durante el registro", e);
+
                 runOnUiThread(() -> {
                     btnRegister.setEnabled(true);
                     btnRegister.setText("Crear cuenta");
@@ -275,6 +280,8 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
 
         } catch (Exception e) {
+            Log.e(TAG, "Error de conexión durante la conexion con Auth", e);
+
             runOnUiThread(() ->
                     Toast.makeText(RegisterActivity.this, "No fue posible conectar con Auth", Toast.LENGTH_LONG).show()
             );
@@ -322,6 +329,7 @@ public class RegisterActivity extends AppCompatActivity {
             return null;
 
         } catch (Exception e) {
+            Log.e(TAG, "Error de conexión durante el login", e);
             return null;
         } finally {
             if (conn != null) conn.disconnect();
@@ -362,6 +370,7 @@ public class RegisterActivity extends AppCompatActivity {
             return responseCode == 201 || responseCode == 200;
 
         } catch (Exception e) {
+            Log.e(TAG, "Error de conexión durante la creación del perfil", e);
             return false;
         } finally {
             if (conn != null) conn.disconnect();

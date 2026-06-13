@@ -19,9 +19,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
-import android.widget.Toast;
+import android.util.Log;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private static final String TAG = "LoginActivity";
 
     private EditText etEmail, etPassword;
     private ImageButton btnTogglePassword;
@@ -169,17 +171,20 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
+                        Log.e(TAG, "Error al procesar la respuesta del login", e);
                         Toast.makeText(LoginActivity.this, "Respuesta inválida del servidor", Toast.LENGTH_LONG).show();
-                    }
+                }
                 });
 
             } catch (Exception e) {
+                Log.e(TAG, "Error de conexión durante el login", e);
+
                 runOnUiThread(() -> {
                     btnLogin.setEnabled(true);
                     btnLogin.setText("Iniciar sesión");
                     Toast.makeText(LoginActivity.this, "No fue posible conectar con el backend", Toast.LENGTH_LONG).show();
                 });
-            } finally {
+        } finally {
                 if (conn != null) {
                     conn.disconnect();
                 }

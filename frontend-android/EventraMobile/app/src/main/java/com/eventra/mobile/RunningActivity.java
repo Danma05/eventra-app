@@ -53,9 +53,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.HashMap;
 
 import com.google.android.gms.tasks.CancellationTokenSource;
+import android.util.Log;
 
 
 public class RunningActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    private static final String TAG = "RunningActivity";
 
     private TextView tvActivityTitle, tvDistance, tvTime, tvPace, tvCalories, tvSpeed;
     private boolean alreadyAutoFinished = false;

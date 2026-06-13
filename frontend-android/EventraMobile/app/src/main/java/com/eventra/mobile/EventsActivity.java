@@ -2,6 +2,7 @@ package com.eventra.mobile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class EventsActivity extends AppCompatActivity {
+
+    private static final String TAG = "EventsActivity";
 
     private ImageButton btnBack;
     private RecyclerView recyclerEvents;
@@ -145,6 +148,9 @@ public class EventsActivity extends AppCompatActivity {
                 });
 
             } catch (Exception e) {
+
+                Log.e(TAG, "Error de conexión durante la activity", e);
+
                 runOnUiThread(() -> {
                     progressBar.setVisibility(View.GONE);
                     tvEmpty.setVisibility(View.VISIBLE);

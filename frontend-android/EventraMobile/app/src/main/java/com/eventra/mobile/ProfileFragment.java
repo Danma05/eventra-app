@@ -2,6 +2,7 @@ package com.eventra.mobile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -18,6 +19,8 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class ProfileFragment extends Fragment {
+
+    private static final String TAG = "ProfileFragment";
 
     private TextView tvFullName, tvUsername, tvLocation, tvProfileStatus;
     private TextView tvEventsRegistered, tvEventsOrganized, tvEventsCompleted;
@@ -165,11 +168,13 @@ public class ProfileFragment extends Fragment {
                             Toast.makeText(requireContext(), "No fue posible cargar perfil", Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
+                        Log.e(TAG, "Error de conexión durante el procesado del perfil", e);
                         Toast.makeText(requireContext(), "Error procesando perfil", Toast.LENGTH_LONG).show();
                     }
                 });
 
             } catch (Exception e) {
+                Log.e(TAG, "Error de conexión durante el procesado del perfil", e);
                 requireActivity().runOnUiThread(() ->
                         Toast.makeText(requireContext(), "No fue posible conectar con backend-user", Toast.LENGTH_LONG).show()
                 );
