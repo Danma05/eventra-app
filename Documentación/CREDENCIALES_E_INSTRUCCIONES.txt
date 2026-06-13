@@ -1,0 +1,90 @@
+PROYECTO EVENTRA
+CREDENCIALES E INSTRUCCIONES DE EJECUCIÓN
+
+1. Repositorio del proyecto
+
+Repositorio GitHub:
+https://github.com/Danma05/eventra-app.git
+
+2. Aplicación móvil
+
+Ruta del proyecto Android:
+frontend-android/EventraMobile
+
+Para ejecutar:
+1. Abrir Android Studio.
+2. Seleccionar Open.
+3. Abrir la carpeta frontend-android/EventraMobile.
+4. Sincronizar Gradle.
+5. Ejecutar en emulador o dispositivo físico Android.
+
+3. Credenciales de prueba
+
+Usuario corredor:
+Correo: runner.demo@eventra.com
+Contraseña: EventraRunner2026*
+
+Usuario organizador:
+Correo: organizador.demo@eventra.com
+Contraseña: EventraOrg2026*
+
+4. Backend desplegado en Render
+
+Auth Service:
+https://eventra-auth.onrender.com
+
+User Service:
+https://eventra-user.onrender.com
+
+Events Service:
+https://eventra-events.onrender.com
+
+Registrations Service:
+https://eventra-registrations.onrender.com
+
+Activity Service:
+https://eventra-activity.onrender.com
+
+Results Service:
+https://eventra-results.onrender.com
+
+5. Base de datos
+
+Motor:
+PostgreSQL
+
+Despliegue:
+Render PostgreSQL
+
+6. Nota técnica
+
+La aplicación no utiliza SQLite local porque la persistencia principal se realiza mediante PostgreSQL en la nube, consumida a través de microservicios REST.
+
+La persistencia local se realiza mediante SharedPreferences, donde se almacena la sesión del usuario, token JWT, correo y rol del usuario autenticado.
+
+7. Arquitectura
+
+El proyecto utiliza una arquitectura basada en microservicios con comunicación REST síncrona.
+
+Microservicios:
+- Auth Service
+- User Service
+- Events Service
+- Registrations Service
+- Activity Service
+- Results Service
+
+8. Pruebas recomendadas
+
+1. Iniciar sesión con el usuario corredor.
+2. Consultar eventos disponibles.
+3. Inscribirse a un evento.
+4. Iniciar actividad.
+5. Ver resultados.
+
+Para organizador:
+1. Iniciar sesión con el usuario organizador.
+2. Crear evento.
+3. Consultar participantes.
+4. Iniciar carrera.
+5. Finalizar carrera.
