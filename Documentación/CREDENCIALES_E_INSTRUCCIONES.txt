@@ -58,9 +58,11 @@ Render PostgreSQL
 
 6. Nota técnica
 
-La aplicación no utiliza SQLite local porque la persistencia principal se realiza mediante PostgreSQL en la nube, consumida a través de microservicios REST.
+La aplicación no utiliza SQLite local porque la persistencia principal se realiza mediante PostgreSQL 
+en la nube, consumida a través de microservicios REST.
 
-La persistencia local se realiza mediante SharedPreferences, donde se almacena la sesión del usuario, token JWT, correo y rol del usuario autenticado.
+La persistencia local se realiza mediante SharedPreferences, donde se almacena la sesión del usuario, 
+token JWT, correo y rol del usuario autenticado.
 
 7. Arquitectura
 
@@ -88,3 +90,37 @@ Para organizador:
 3. Consultar participantes.
 4. Iniciar carrera.
 5. Finalizar carrera.
+
+9. Tecnologías utilizadas
+
+Frontend:
+- Android Studio
+- Java
+- XML
+
+Backend:
+- Node.js
+- Express.js
+
+Base de datos:
+- PostgreSQL
+
+Despliegue:
+- Render
+
+Control de versiones:
+- Git
+- GitHub
+
+Gestión del proyecto:
+- Jira
+
+10. Información del proyecto
+
+Nombre:
+Eventra
+
+Descripción:
+Aplicación móvil para la gestión de eventos de running que permite registro de usuarios, autenticación, 
+creación de eventos, inscripción de corredores, seguimiento de actividades deportivas y visualización 
+de resultados mediante una arquitectura basada en microservicios.

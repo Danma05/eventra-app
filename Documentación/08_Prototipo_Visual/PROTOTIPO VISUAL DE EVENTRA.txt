@@ -1,0 +1,33 @@
+# PROTOTIPO VISUAL DE EVENTRA
+
+## Nota Importante
+
+Las imágenes presentadas en este documento corresponden al prototipo visual utilizado durante las etapas iniciales de análisis, diseño y planificación del proyecto Eventra.
+
+Durante el proceso de desarrollo se realizaron diversos ajustes y mejoras sobre la versión final de la aplicación con el objetivo de optimizar la experiencia de usuario, mejorar la arquitectura visual y adaptar nuevas funcionalidades identificadas durante la implementación.
+
+Por esta razón, algunas pantallas, componentes visuales, colores, iconografía y flujos de navegación pueden presentar diferencias respecto a la versión actualmente implementada y desplegada del sistema.
+
+Entre las principales modificaciones realizadas durante el desarrollo se encuentran:
+
+* Actualización de la identidad visual institucional.
+* Implementación del logotipo oficial de Eventra.
+* Ajustes en la paleta de colores definida en colors.xml.
+* Personalización de temas visuales mediante themes.xml.
+* Mejoras en la experiencia de usuario.
+* Reorganización de algunas pantallas y componentes.
+* Incorporación de nuevas funcionalidades para organizadores y corredores.
+* Implementación de nuevas operaciones asociadas a eventos, actividades y resultados.
+* Optimización de procesos de autenticación y gestión de sesiones.
+
+Por lo anterior, este documento debe considerarse como una referencia del proceso de diseño y prototipado realizado durante el proyecto, mientras que la aplicación desarrollada constituye la versión funcional definitiva entregada como resultado final del desarrollo.
+
+---
+
+## Objetivo del Prototipo
+
+El objetivo de este prototipo fue validar la estructura de navegación, los flujos de usuario y la organización general de la aplicación antes de iniciar la fase de desarrollo.
+
+Las pantallas incluidas representan los principales módulos funcionales de Eventra y permitieron establecer la base visual utilizada durante la construcción del sistema.
+
+Las funcionalidades implementadas en la versión final conservan la esencia del diseño original, aunque incorporan mejoras derivadas del proceso de desarrollo, pruebas y retroalimentación obtenida durante el proyecto.
