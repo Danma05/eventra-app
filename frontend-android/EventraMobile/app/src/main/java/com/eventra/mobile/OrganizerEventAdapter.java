@@ -101,7 +101,6 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
                 holder.btnPublishResults.setOnClickListener(v -> listener.onPublishRanking(event));
             }
         }
-        holder.btnPublishResults.setOnClickListener(v -> listener.onRaceControl(event));
     }
 
     @Override

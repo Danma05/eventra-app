@@ -696,6 +696,9 @@ public class OrganizerPanelActivity extends AppCompatActivity {
                 String response = scanner.hasNext() ? scanner.next() : "";
                 scanner.close();
 
+                Log.d("OrganizerPanel", "Publish ranking responseCode: " + responseCode);
+                Log.d("OrganizerPanel", "Publish ranking response: " + response);
+
                 runOnUiThread(() -> {
                     if (responseCode == 200) {
                         event.setResultsPublished(true);
