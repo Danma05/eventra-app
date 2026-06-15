@@ -1,0 +1,65 @@
+EVENTRA - INFORMACIÓN IMPORTANTE PARA PRUEBAS
+
+---
+
+## DESPLIEGUE DE MICROSERVICIOS
+
+La aplicación Eventra se encuentra desplegada utilizando la plataforma Render.
+
+El proyecto utiliza el plan gratuito de Render para los microservicios y bases de datos.
+
+Debido a las limitaciones del plan gratuito, los servicios entran automáticamente en estado de suspensión (sleep mode) después de varios minutos sin recibir solicitudes.
+
+Cuando esto ocurre:
+
+1. El primer consumo de un endpoint puede tardar entre 30 segundos y 2 minutos aproximadamente.
+2. Render debe volver a iniciar el contenedor correspondiente.
+3. Una vez iniciado el servicio, las siguientes solicitudes responden normalmente.
+4. Este comportamiento es completamente normal y corresponde a una limitación del plan gratuito utilizado para fines académicos.
+
+---
+
+## RECOMENDACIÓN DE PRUEBA
+
+Al iniciar la aplicación por primera vez:
+
+* Esperar unos segundos si aparece algún mensaje de conexión.
+* Intentar nuevamente la operación después de unos instantes.
+* Una vez que Render reactive los servicios, la aplicación funcionará con normalidad.
+
+---
+
+## ESTADO DEL PROYECTO
+
+La aplicación implementa:
+
+* Registro de usuarios.
+* Inicio de sesión.
+* Gestión de perfiles.
+* Creación de eventos.
+* Inscripciones.
+* Control de carrera.
+* Generación de resultados.
+* Publicación de rankings.
+
+Los microservicios se encuentran conectados a PostgreSQL y desplegados en Render.
+
+---
+
+## OBSERVACIÓN ACADÉMICA
+
+El comportamiento de reactivación de servicios no corresponde a errores del sistema ni de la aplicación.
+
+Es una característica propia del hosting gratuito utilizado para el despliegue del proyecto.
+
+Una vez los servicios son activados nuevamente, la aplicación opera de manera normal.
+
+---
+
+## AUTOR
+
+Daniel Alejandro Martínez Escandón
+
+Proyecto Eventra
+Tecnología en Desarrollo de Software
+2026
