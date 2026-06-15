@@ -2,6 +2,7 @@ package com.eventra.mobile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -146,6 +147,12 @@ public class OrganizerPanelActivity extends AppCompatActivity {
                         intent.putExtra("event_title", event.getTitle());
                         startActivity(intent);
                     }
+
+                    @Override
+                    public void onPublishRanking(Event event) {
+                        publishRanking(event);
+                    }
+
                 }
         );
 
@@ -276,8 +283,11 @@ public class OrganizerPanelActivity extends AppCompatActivity {
                                         obj.optString("location"),
                                         obj.optInt("capacity"),
                                         obj.optString("status"),
+                                        obj.optString("race_status", "CREATED"),
                                         obj.optString("image_url")
                                 );
+
+                                event.setResultsPublished(obj.optBoolean("results_published", false));
 
                                 allOrganizerEvents.add(event);
                             }
@@ -306,15 +316,26 @@ public class OrganizerPanelActivity extends AppCompatActivity {
         filteredEvents.clear();
 
         for (Event event : allOrganizerEvents) {
-            if (showingActive && "ACTIVE".equals(event.getStatus())) {
+            String status = event.getStatus() != null ? event.getStatus() : "";
+            String raceStatus = event.getRaceStatus() != null ? event.getRaceStatus() : "CREATED";
+
+            boolean isDeletedOrInactive =
+                    "INACTIVE".equalsIgnoreCase(status) ||
+                            "CANCELLED".equalsIgnoreCase(status) ||
+                            "CANCELLED".equalsIgnoreCase(raceStatus);
+
+            boolean isFinished = "FINISHED".equalsIgnoreCase(raceStatus);
+
+            if (showingActive && !isDeletedOrInactive && !isFinished) {
                 filteredEvents.add(event);
             }
 
-            if (!showingActive && "FINISHED".equals(event.getStatus())) {
+            if (!showingActive && isFinished) {
                 filteredEvents.add(event);
             }
         }
 
+        adapter.setShowingActive(showingActive);
         adapter.notifyDataSetChanged();
 
         if (filteredEvents.isEmpty()) {
@@ -528,7 +549,7 @@ public class OrganizerPanelActivity extends AppCompatActivity {
     }
 
     private void confirmFinishEvent(Event event) {
-        if ("FINISHED".equals(event.getStatus())) {
+        if ("FINISHED".equalsIgnoreCase(event.getRaceStatus())) {
             Toast.makeText(
                     this,
                     "Este evento ya está completado",
@@ -636,6 +657,73 @@ public class OrganizerPanelActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG
                         ).show()
                 );
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+        }).start();
+    }
+
+    private void publishRanking(Event event) {
+        String token = sessionManager.getToken();
+
+        if (token == null || token.isEmpty()) {
+            Toast.makeText(this, "Sesión no válida", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        new Thread(() -> {
+            HttpURLConnection conn = null;
+
+            try {
+                URL url = new URL(ApiConfig.RESULTS_URL + "/results/event/" + event.getId() + "/publish");
+                conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("PUT");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = (responseCode >= 200 && responseCode < 300)
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                Scanner scanner = new Scanner(is).useDelimiter("\\A");
+                String response = scanner.hasNext() ? scanner.next() : "";
+                scanner.close();
+
+                runOnUiThread(() -> {
+                    if (responseCode == 200) {
+                        event.setResultsPublished(true);
+                        adapter.notifyDataSetChanged();
+
+                        Toast.makeText(
+                                OrganizerPanelActivity.this,
+                                "Ranking publicado correctamente",
+                                Toast.LENGTH_LONG
+                        ).show();
+                    } else {
+                        Toast.makeText(
+                                OrganizerPanelActivity.this,
+                                "No se pudo publicar el ranking",
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e("OrganizerPanel", "Error al publicar ranking", e);
+
+                runOnUiThread(() -> Toast.makeText(
+                        OrganizerPanelActivity.this,
+                        "Error de conexión al publicar ranking",
+                        Toast.LENGTH_LONG
+                ).show());
+
             } finally {
                 if (conn != null) {
                     conn.disconnect();

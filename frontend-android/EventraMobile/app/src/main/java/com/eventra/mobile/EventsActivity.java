@@ -123,6 +123,7 @@ public class EventsActivity extends AppCompatActivity {
                                         obj.optString("location"),
                                         obj.optInt("capacity"),
                                         obj.optString("status"),
+                                        obj.optString("race_status", "CREATED"),
                                         obj.optString("image_url")
                                 );
 

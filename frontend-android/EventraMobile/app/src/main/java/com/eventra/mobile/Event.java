@@ -10,10 +10,22 @@ public class Event {
     private String location;
     private int capacity;
     private String status;
+    private String raceStatus;
     private String imageUrl;
+    private boolean resultsPublished;
 
+    // Constructor antiguo: se deja para no romper EventsActivity, EventsFragment u otras clases
     public Event(long id, long organizerAuthUserId, String title, String description,
-                 String eventDate, String location, int capacity, String status, String imageUrl) {
+                 String eventDate, String location, int capacity, String status,
+                 String imageUrl) {
+        this(id, organizerAuthUserId, title, description, eventDate, location,
+                capacity, status, "CREATED", imageUrl);
+    }
+
+    // Constructor nuevo con raceStatus
+    public Event(long id, long organizerAuthUserId, String title, String description,
+                 String eventDate, String location, int capacity, String status,
+                 String raceStatus, String imageUrl) {
         this.id = id;
         this.organizerAuthUserId = organizerAuthUserId;
         this.title = title;
@@ -22,7 +34,9 @@ public class Event {
         this.location = location;
         this.capacity = capacity;
         this.status = status;
+        this.raceStatus = raceStatus;
         this.imageUrl = imageUrl;
+        this.resultsPublished = false;
     }
 
     public long getId() {
@@ -57,7 +71,27 @@ public class Event {
         return status;
     }
 
+    public String getRaceStatus() {
+        return raceStatus;
+    }
+
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public boolean isResultsPublished() {
+        return resultsPublished;
+    }
+
+    public void setResultsPublished(boolean resultsPublished) {
+        this.resultsPublished = resultsPublished;
+    }
+
+    public void setRaceStatus(String raceStatus) {
+        this.raceStatus = raceStatus;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

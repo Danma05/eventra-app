@@ -120,6 +120,7 @@ public class EventsFragment extends Fragment {
                                     obj.optString("location"),
                                     obj.optInt("capacity"),
                                     status,
+                                    obj.optString("race_status", "CREATED"),
                                     obj.optString("image_url")
                             ));
                             

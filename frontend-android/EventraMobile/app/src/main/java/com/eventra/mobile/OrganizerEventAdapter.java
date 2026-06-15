@@ -23,11 +23,13 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         void onViewParticipants(Event event);
         void onPublishResults(Event event);
         void onRaceControl(Event event);
+        void onPublishRanking(Event event);
     }
 
     private final List<Event> events;
     private final HashMap<Long, Integer> registrationCounts;
     private final OnOrganizerEventClickListener listener;
+    private boolean showingActive = true;
 
     public OrganizerEventAdapter(
             List<Event> events,
@@ -56,7 +58,8 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
         holder.tvTitle.setText(event.getTitle());
         holder.tvDate.setText(event.getEventDate());
-        holder.tvStatus.setText(event.getStatus());
+        String raceStatus = event.getRaceStatus() != null ? event.getRaceStatus() : "CREATED";
+        holder.tvStatus.setText(raceStatus);
 
         holder.tvCapacity.setText(registered + " / " + capacity);
 
@@ -71,7 +74,33 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
         holder.btnEdit.setOnClickListener(v -> listener.onEdit(event));
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(event));
         holder.btnViewParticipants.setOnClickListener(v -> listener.onViewParticipants(event));
-        holder.btnPublishResults.setText("Control Carrera");
+
+        holder.btnPublishResults.setAlpha(1f);
+
+        if (showingActive) {
+
+            holder.btnPublishResults.setText("Control Carrera");
+            holder.btnPublishResults.setEnabled(true);
+            holder.btnPublishResults.setAlpha(1f);
+            holder.btnPublishResults.setOnClickListener(v -> listener.onRaceControl(event));
+
+        } else {
+
+            if (event.isResultsPublished()) {
+
+                holder.btnPublishResults.setText("Ranking Publicado");
+                holder.btnPublishResults.setEnabled(false);
+                holder.btnPublishResults.setAlpha(0.6f);
+                holder.btnPublishResults.setOnClickListener(null);
+
+            } else {
+
+                holder.btnPublishResults.setText("Publicar Ranking");
+                holder.btnPublishResults.setEnabled(true);
+                holder.btnPublishResults.setAlpha(1f);
+                holder.btnPublishResults.setOnClickListener(v -> listener.onPublishRanking(event));
+            }
+        }
         holder.btnPublishResults.setOnClickListener(v -> listener.onRaceControl(event));
     }
 
@@ -103,5 +132,10 @@ public class OrganizerEventAdapter extends RecyclerView.Adapter<OrganizerEventAd
 
             progressCapacity = itemView.findViewById(R.id.progressCapacity);
         }
+    }
+
+    public void setShowingActive(boolean showingActive) {
+        this.showingActive = showingActive;
+        notifyDataSetChanged();
     }
 }
