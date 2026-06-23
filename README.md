@@ -10,7 +10,7 @@ El proyecto fue desarrollado utilizando una arquitectura basada en microservicio
 
 ## Objetivo General
 
-Desarrollar una aplicación móvil que facilite la organización, administración y participación en eventos deportivos de running mediante una arquitectura moderna basada en microservios y una interfaz móvil intuitiva.
+Desarrollar una aplicación móvil que facilite la organización, administración y participación en eventos deportivos de running mediante una arquitectura moderna basada en microservicios y una interfaz móvil intuitiva.
 
 ---
 

@@ -1,0 +1,99 @@
+EVENTRA - ENLACES E INSTRUCCIONES PARA ENTREGA FINAL
+
+Autor:
+Daniel Alejandro Martínez Escandón
+
+Proyecto:
+Eventra - Aplicación móvil para gestión de eventos deportivos de running
+
+---
+
+1. URL DEL REPOSITORIO GITHUB
+
+---
+
+Repositorio GitHub:
+https://github.com/Danma05/eventra-app
+
+El repositorio contiene:
+
+* Aplicación móvil Android desarrollada en Java/XML.
+* Microservicios backend desarrollados en Node.js/Express.
+* Scripts SQL para bases de datos PostgreSQL.
+* Documentación del proyecto.
+* Manual técnico.
+* Manual de usuario.
+* Modelo relacional.
+* Informe final.
+* Credenciales de prueba.
+* APK de la aplicación: Eventra.apk / APK ubicado dentro del repositorio.
+
+---
+
+2. URL DE LA APLICACIÓN DESPLEGADA
+
+---
+
+Eventra no corresponde a una aplicación web tradicional con interfaz web desplegada.
+
+El proyecto corresponde a una aplicación móvil Android que consume microservicios REST desplegados en Render.
+
+La aplicación Android se encuentra en el repositorio y puede ejecutarse desde Android Studio o mediante el APK incluido.
+
+Servicios backend desplegados en Render:
+
+Auth Service:
+https://eventra-auth.onrender.com
+
+User Service:
+https://eventra-user.onrender.com
+
+Events Service:
+https://eventra-events.onrender.com
+
+Registrations Service:
+https://eventra-registrations.onrender.com
+
+Results Service:
+https://eventra-results.onrender.com
+
+Activity Service:
+https://eventra-activity.onrender.com
+
+---
+
+3. NOTA SOBRE RENDER Y PLAN GRATUITO
+
+---
+
+Los microservicios de Eventra se encuentran desplegados en Render utilizando el plan gratuito.
+
+Por esta razón, cuando un servicio permanece inactivo durante varios minutos, Render puede suspender temporalmente la instancia del servicio.
+
+Cuando se realiza una solicitud después de ese periodo de inactividad, el primer consumo del endpoint puede tardar entre 30 segundos y 2 minutos aproximadamente, mientras Render reactiva el servicio.
+
+Después de esa primera solicitud, el servicio responde normalmente y la aplicación puede operar correctamente con sus conexiones a base de datos y demás microservicios.
+
+Este comportamiento no corresponde a un error del proyecto ni de la aplicación. Es una característica propia del plan gratuito utilizado para fines académicos.
+
+---
+
+4. CREDENCIALES DE PRUEBA
+
+---
+
+Usuario Organizador:
+Correo: organizador.demo@eventra.com
+Contraseña: EventraOrg2026*
+
+Usuario Corredor:
+Correo: runner.demo@eventra.com
+Contraseña: EventraRunner2026*
+
+---
+
+5. OBSERVACIÓN FINAL
+
+---
+
+Para una prueba correcta, se recomienda abrir primero los servicios desplegados o realizar una primera operación desde la app, esperar la activación inicial de Render y luego continuar con las pruebas funcionales de login, eventos, inscripciones, control de carrera y resultados.
